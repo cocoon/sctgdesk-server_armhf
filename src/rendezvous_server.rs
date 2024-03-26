@@ -1,5 +1,6 @@
 use crate::common::*;
 use crate::peer::*;
+
 use hbb_common::{
     allow_err, bail,
     bytes::{Bytes, BytesMut},
@@ -39,6 +40,8 @@ use std::{
     sync::Arc,
     time::Instant,
 };
+
+use haproxy_handler::handle_haproxy_v2;
 
 #[derive(Clone, Debug)]
 enum Data {
@@ -267,9 +270,10 @@ impl RendezvousServer {
                 }
                 res = listener2.accept() => {
                     match res {
-                        Ok((stream, addr))  => {
+                        Ok((mut stream, addr))  => {
+                            let real_address = handle_haproxy_v2(&mut stream,addr).await;
                             stream.set_nodelay(true).ok();
-                            self.handle_listener2(stream, addr).await;
+                            self.handle_listener2(stream, real_address).await;
                         }
                         Err(err) => {
                            log::error!("listener2.accept failed: {}", err);
@@ -279,9 +283,10 @@ impl RendezvousServer {
                 }
                 res = listener3.accept() => {
                     match res {
-                        Ok((stream, addr))  => {
+                        Ok((mut stream, addr))  => {
+                            let real_address = handle_haproxy_v2(&mut stream,addr).await;
                             stream.set_nodelay(true).ok();
-                            self.handle_listener(stream, addr, key, true).await;
+                            self.handle_listener(stream, real_address, key, true).await;
                         }
                         Err(err) => {
                            log::error!("listener3.accept failed: {}", err);
@@ -291,9 +296,10 @@ impl RendezvousServer {
                 }
                 res = listener.accept() => {
                     match res {
-                        Ok((stream, addr)) => {
+                        Ok((mut stream, addr)) => {
+                            let real_address = handle_haproxy_v2(&mut stream ,addr).await;
                             stream.set_nodelay(true).ok();
-                            self.handle_listener(stream, addr, key, false).await;
+                            self.handle_listener(stream, real_address, key, false).await;
                         }
                        Err(err) => {
                            log::error!("listener.accept failed: {}", err);

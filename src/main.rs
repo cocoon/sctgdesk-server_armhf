@@ -2,7 +2,7 @@
 // https://blog.csdn.net/bytxl/article/details/44344855
 
 use flexi_logger::*;
-use hbb_common::{bail, config::RENDEZVOUS_PORT, ResultType};
+use hbb_common::{ bail, config::RENDEZVOUS_PORT, ResultType};
 use hbbs::{common::*, *};
 
 const RMEM: usize = 0;
@@ -22,13 +22,15 @@ fn main() -> ResultType<()> {
         -r, --relay-servers=[HOST] 'Sets the default relay servers, seperated by colon'
         -M, --rmem=[NUMBER(default={RMEM})] 'Sets UDP recv buffer size, set system rmem_max first, e.g., sudo sysctl -w net.core.rmem_max=52428800. vi /etc/sysctl.conf, net.core.rmem_max=52428800, sudo sysctl –p'
         , --mask=[MASK] 'Determine if the connection comes from LAN, e.g. 192.168.0.0/16'
-        -k, --key=[KEY] 'Only allow the client with the same key'",
+        -k, --key=[KEY] 'Only allow the client with the same key'
+        -P, --proxy-v2=[BOOL] 'Accept the proxy protocol version 2 Y/N'",
     );
     init_args(&args, "hbbs", "RustDesk ID/Rendezvous Server");
     let port = get_arg_or("port", RENDEZVOUS_PORT.to_string()).parse::<i32>()?;
     if port < 3 {
         bail!("Invalid port");
     }
+
     let rmem = get_arg("rmem").parse::<usize>().unwrap_or(RMEM);
     let serial: i32 = get_arg("serial").parse().unwrap_or(0);
     RendezvousServer::start(port, serial, &get_arg("key"), rmem)?;

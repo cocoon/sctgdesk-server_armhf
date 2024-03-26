@@ -8,7 +8,7 @@
   [<a href="README-DE.md">Deutsch</a>] | [<a href="README-NL.md">Nederlands</a>] | [<a href="README-TW.md">繁體中文</a>]<br>
 </p>
 
-# RustDesk Server Program
+# RustDesk Server Program with Haproxy protocol v2 support
 
 [![build](https://github.com/rustdesk/rustdesk-server/actions/workflows/build.yaml/badge.svg)](https://github.com/rustdesk/rustdesk-server/actions/workflows/build.yaml)
 
@@ -19,6 +19,37 @@
 [**FAQ**](https://github.com/rustdesk/rustdesk/wiki/FAQ)
 
 Self-host your own RustDesk server, it is free and open source.
+
+## Why ?
+
+**It is only a test version** of the RustDesk server program with Haproxy protocol v2 support. The original version is at https://github.com/rustdesk/rustdesk-server .
+
+I'd like to run hbbs and hbbr on a Kubernetes cluster but it doesn't work. I have to use the Haproxy protocol v2 support to make it work. I have added the Haproxy protocol v2 support to the original version. I hope that the original author can add the Haproxy protocol v2 support to the original version. I will not maintain this version. If you need the Haproxy protocol v2 support, you can use this version. If you don't need the Haproxy protocol v2 support, you can use the original version.
+
+Currently it cannot be used as is. Haproxy does not support udp. And according to Haproxy it will probably never happen.
+
+For using add `--proxy-v2` to `hbbs` and `hbbr` command line.
+This is a starting point, the real peer address is currently parsed from the proxy protocol header and provided to `handle_listener` or `handle_listener2` function.
+
+## Haproxy
+
+I've added a sample configuration for Haproxy in the `root` directory. You can use it to test the Haproxy protocol v2 support.
+I launch the Haproxy with the following command:
+
+```bash
+haproxy -d -f haproxy.cfg
+```
+
+And hbbs and hbbr with the following command:
+
+```bash
+hbbs --proxy-v2 -r 22116
+hbbr --proxy-v2 -r 22117
+```
+
+## Websocket
+
+Rustdesk server has built-in websocket support. I'm thinking it is the best way to use Rustdesk server on Kubernetes. I will try to use websocket to connect to Rustdesk server on Kubernetes. Rustesk web uses websocket to connect to Rustdesk server…
 
 ## How to build manually
 

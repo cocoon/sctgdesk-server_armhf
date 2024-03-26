@@ -1,0 +1,11 @@
+[package]
+name = "haproxy_handler"
+version = "0.1.0"
+authors = ["ronan <ronan@sctg.eu.org>"]
+edition = "2021"
+
+[dependencies]
+proxy-protocol = "0.5"
+tokio = "1.0"
+bytes = "1.0"
+hbb_common = { git = "https://github.com/rustdesk/rustdesk-server.git", package = "hbb_common" }

@@ -28,6 +28,8 @@ use std::{
     sync::atomic::{AtomicUsize, Ordering},
 };
 
+use haproxy_handler::handle_haproxy_v2;
+
 type Usage = (usize, usize, usize, usize);
 
 lazy_static::lazy_static! {
@@ -330,9 +332,10 @@ async fn io_loop(listener: TcpListener, listener2: TcpListener, key: &str) {
         tokio::select! {
             res = listener.accept() => {
                 match res {
-                    Ok((stream, addr))  => {
+                    Ok((mut stream, addr))  => {
+                        let real_address = handle_haproxy_v2(&mut stream,addr).await;
                         stream.set_nodelay(true).ok();
-                        handle_connection(stream, addr, &limiter, key, false).await;
+                        handle_connection(stream, real_address, &limiter, key, false).await;
                     }
                     Err(err) => {
                        log::error!("listener.accept failed: {}", err);
@@ -342,9 +345,10 @@ async fn io_loop(listener: TcpListener, listener2: TcpListener, key: &str) {
             }
             res = listener2.accept() => {
                 match res {
-                    Ok((stream, addr))  => {
+                    Ok((mut stream, addr))  => {
+                        let real_address = handle_haproxy_v2(&mut stream,addr).await;
                         stream.set_nodelay(true).ok();
-                        handle_connection(stream, addr, &limiter, key, true).await;
+                        handle_connection(stream, real_address, &limiter, key, true).await;
                     }
                     Err(err) => {
                        log::error!("listener2.accept failed: {}", err);

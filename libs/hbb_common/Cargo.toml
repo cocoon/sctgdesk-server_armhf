@@ -47,5 +47,6 @@ protobuf-codegen = { version = "3.1" }
 winapi = { version = "0.3", features = ["winuser"] }
 
 [dev-dependencies]
+bytes = "1.0"
 toml = "0.5"
 serde_json = "1.0"

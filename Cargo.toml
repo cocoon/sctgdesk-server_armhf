@@ -51,9 +51,11 @@ ipnetwork = "0.20"
 local-ip-address = "0.5.1"
 dns-lookup = "1.0.8"
 ping = "0.4.0"
+haproxy_handler = { path = "libs/haproxy_handler" }
 
 [build-dependencies]
 hbb_common = { path = "libs/hbb_common" }
+haproxy_handler = { path = "libs/haproxy_handler" }
 
 [workspace]
 members = ["libs/hbb_common"]
