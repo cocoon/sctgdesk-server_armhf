@@ -43,8 +43,8 @@ haproxy -d -f haproxy.cfg
 And hbbs and hbbr with the following command:
 
 ```bash
-hbbs --proxy-v2 -r 22116
-hbbr --proxy-v2 -r 22117
+hbbs --proxy-v2 -p 22116
+hbbr --proxy-v2 -p 22117
 ```
 
 ## Websocket
