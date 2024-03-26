@@ -45,7 +45,7 @@ jobs:
           cache-to: type=gha,mode=max
           platforms: linux/arm64, linux/amd64
           push: true
-          tags: eltorio/sctgdesk-server:${{ github.ref }},eltorio/sctgdesk-server:latest
+          tags: eltorio/sctgdesk-server:${{ github.ref_name }},eltorio/sctgdesk-server:latest
           labels: ${{ steps.meta.outputs.labels }}
           
 
