@@ -28,7 +28,7 @@ I'd like to run hbbs and hbbr on a Kubernetes cluster but it doesn't work. I hav
 
 Currently it cannot be used as is. Haproxy does not support udp. And according to Haproxy it will probably never happen.
 
-For using add `--proxy-v2` to `hbbs` and `hbbr` command line.
+For using add `--proxy-v2=Y` to `hbbs` command line.
 This is a starting point, the real peer address is currently parsed from the proxy protocol header and provided to `handle_listener` or `handle_listener2` function.
 
 ## Haproxy
@@ -43,8 +43,8 @@ haproxy -d -f haproxy.cfg
 And hbbs and hbbr with the following command:
 
 ```bash
-hbbs --proxy-v2 -p 22116
-hbbr --proxy-v2 -p 22117
+hbbs --proxy-v2=Y -p 22116
+hbbr -p 22117
 ```
 
 ## Websocket
