@@ -32,6 +32,7 @@ use hbb_common::{
 };
 use ipnetwork::Ipv4Network;
 use sodiumoxide::crypto::sign;
+use sodiumoxide::hex;
 use std::{
     collections::HashMap,
     net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr},
@@ -1125,6 +1126,33 @@ impl RendezvousServer {
         } else {
             let (a, mut b) = Framed::new(stream, BytesCodec::new()).split();
             sink = Some(Sink::TcpStream(a));
+            if !false {
+                let mut msg_out = RendezvousMessage::new();
+                
+                let (key, sk) = Self::get_server_sk(&key);
+                match sk {
+                    Some(sk) => {
+                        let pk = sk.public_key();
+                        let m = pk.as_ref();
+                        let sm = sign::sign(m, &sk);
+                
+                        let bytes_sm = Bytes::from(sm);
+                        msg_out.set_key_exchange(KeyExchange {
+                            keys: vec![bytes_sm],
+                            ..Default::default()
+                        });
+                        log::debug!(
+                            "KeyExchange {:?} -> bytes: {:?}",
+                            addr,
+                            hex::encode(Bytes::from(msg_out.write_to_bytes().unwrap()))
+                        );
+                        //stream.set_key(pk);
+                        Self::send_to_sink(&mut sink, msg_out).await;
+                    }
+                    None => {
+                    }
+                }
+            }
             while let Ok(Some(Ok(bytes))) = timeout(30_000, b.next()).await {
                 if !self.handle_tcp(&bytes, &mut sink, addr, key, ws).await {
                     break;
