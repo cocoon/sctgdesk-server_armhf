@@ -31,6 +31,8 @@ use hbb_common::{
     AddrMangle, ResultType,
 };
 use ipnetwork::Ipv4Network;
+use jsonwebtoken::crypto;
+use sodiumoxide::crypto::box_;
 use sodiumoxide::crypto::sign;
 use sodiumoxide::hex;
 use std::{
@@ -81,6 +83,9 @@ pub struct RendezvousServer {
     relay_servers0: Arc<RelayServers>,
     rendezvous_servers: Arc<Vec<String>>,
     inner: Arc<Inner>,
+    our_pk_b: box_::PublicKey,
+    our_sk_b: box_::SecretKey,
+    key_exchange_phase1_done: bool,
 }
 
 enum LoopFailure {
@@ -120,6 +125,7 @@ impl RendezvousServer {
                     .unwrap_or_default(),
             )
         };
+        let (our_pk_b, our_sk_b)= box_::gen_keypair();
         let mut rs = Self {
             tcp_punch: Arc::new(Mutex::new(HashMap::new())),
             pm,
@@ -135,6 +141,11 @@ impl RendezvousServer {
                 mask,
                 local_ip,
             }),
+            our_pk_b,
+            our_sk_b,
+            key_exchange_phase1_done: false,
+            
+
         };
         log::info!("mask: {:?}", rs.inner.mask);
         log::info!("local-ip: {:?}", rs.inner.local_ip);
@@ -554,6 +565,28 @@ impl RendezvousServer {
                         ..Default::default()
                     });
                     Self::send_to_sink(sink, msg_out).await;
+                }
+                Some(rendezvous_message::Union::RegisterPeer(_)) => {
+                    log::debug!("RegisterPeer {:?} <- bytes: {:?}", addr, hex::encode(&bytes));
+                }
+                Some(rendezvous_message::Union::KeyExchange(ex)) => {
+                    log::debug!("KeyExchange {:?} <- bytes: {:?}", addr, hex::encode(&bytes));
+                    if ex.keys.len() != 2 {
+                        log::error!("Handshake failed: invalid phase 2 key exchange message");
+                        return false;
+                    }
+                
+                    log::debug!("KeyExchange their_pk: {:?}", hex::encode(&ex.keys[0]));
+                    log::debug!("KeyExchange box: {:?}", hex::encode(&ex.keys[1]));
+                    let their_pk: [u8;32] = ex.keys[0].to_vec().try_into().unwrap();
+                    let cryptobox: [u8;48] = ex.keys[1].to_vec().try_into().unwrap();
+                    let symetric_key = get_symetric_key_from_msg(self.our_sk_b.0,their_pk,&cryptobox);
+                    log::debug!("KeyExchange symetric key: {:?}", hex::encode(&symetric_key));
+                    //stream.set_key(symetric_key);
+                    log::debug!("KeyExchange symetric key set");
+                }
+                Some(rendezvous_message::Union::SoftwareUpdate(_)) => {
+                    log::debug!("SoftwareUpdate {:?} <- bytes: {:?}", addr, hex::encode(&bytes));
                 }
                 _ => {}
             }
@@ -1098,6 +1131,7 @@ impl RendezvousServer {
         log::debug!("Tcp connection from {:?}, ws: {}", addr, ws);
         let mut rs = self.clone();
         let key = key.to_owned();
+        let (our_pk_b, out_sk_b) = box_::gen_keypair();
         tokio::spawn(async move {
             allow_err!(rs.handle_listener_inner(stream, addr, &key, ws).await);
         });
@@ -1126,32 +1160,9 @@ impl RendezvousServer {
         } else {
             let (a, mut b) = Framed::new(stream, BytesCodec::new()).split();
             sink = Some(Sink::TcpStream(a));
-            if !false {
-                let mut msg_out = RendezvousMessage::new();
-                
-                let (key, sk) = Self::get_server_sk(&key);
-                match sk {
-                    Some(sk) => {
-                        let pk = sk.public_key();
-                        let m = pk.as_ref();
-                        let sm = sign::sign(m, &sk);
-                
-                        let bytes_sm = Bytes::from(sm);
-                        msg_out.set_key_exchange(KeyExchange {
-                            keys: vec![bytes_sm],
-                            ..Default::default()
-                        });
-                        log::debug!(
-                            "KeyExchange {:?} -> bytes: {:?}",
-                            addr,
-                            hex::encode(Bytes::from(msg_out.write_to_bytes().unwrap()))
-                        );
-                        //stream.set_key(pk);
-                        Self::send_to_sink(&mut sink, msg_out).await;
-                    }
-                    None => {
-                    }
-                }
+            if !self.key_exchange_phase1_done {
+                self.key_exchange_phase1(key, addr, &mut sink).await;
+                self.key_exchange_phase1_done = true;
             }
             while let Ok(Some(Ok(bytes))) = timeout(30_000, b.next()).await {
                 if !self.handle_tcp(&bytes, &mut sink, addr, key, ws).await {
@@ -1164,6 +1175,33 @@ impl RendezvousServer {
         }
         log::debug!("Tcp connection from {:?} closed", addr);
         Ok(())
+    }
+
+    async fn key_exchange_phase1(&mut self,key: &str, addr: SocketAddr, sink: &mut Option<Sink>) {
+        let mut msg_out = RendezvousMessage::new();
+
+        let (key, sk) = Self::get_server_sk(&key);
+        match sk {
+            Some(sk) => {
+                let our_pk_b = self.our_pk_b.clone();
+                let our_sk_b = self.our_sk_b.clone();
+                let pk = sk.public_key();
+                let sm = sign::sign(&our_pk_b.0, &sk);
+
+                let bytes_sm = Bytes::from(sm);
+                msg_out.set_key_exchange(KeyExchange {
+                    keys: vec![bytes_sm],
+                    ..Default::default()
+                });
+                log::debug!(
+                    "KeyExchange {:?} -> bytes: {:?}",
+                    addr,
+                    hex::encode(Bytes::from(msg_out.write_to_bytes().unwrap()))
+                );
+                Self::send_to_sink(sink, msg_out).await;
+            }
+            None => {}
+        }
     }
 
     #[inline]
@@ -1337,4 +1375,23 @@ async fn create_tcp_listener(port: i32) -> ResultType<TcpListener> {
     let s = listen_any(port as _).await?;
     log::debug!("listen on tcp {:?}", s.local_addr());
     Ok(s)
+}
+
+pub fn get_symetric_key_from_msg(
+    our_sk_b: [u8; 32],
+    their_pk_b: [u8; 32],
+    sealed_value: &[u8; 48],
+) -> [u8; 32] {
+    let their_pk_b = box_::PublicKey(their_pk_b);
+    let nonce = box_::Nonce([0u8; box_::NONCEBYTES]);
+    let sk = box_::SecretKey(our_sk_b);
+    let key = box_::open(sealed_value, &nonce, &their_pk_b, &sk);
+    match key {
+        Ok(key) => {
+            let mut key_array = [0u8; 32];
+            key_array.copy_from_slice(&key);
+            key_array
+        }
+        Err(e) => panic!("Error while opening the seal key{:?}", e),
+    }
 }
