@@ -31,7 +31,7 @@ use hbb_common::{
     AddrMangle, ResultType,
 };
 use ipnetwork::Ipv4Network;
-use jsonwebtoken::crypto;
+
 use sodiumoxide::crypto::box_;
 use sodiumoxide::crypto::sign;
 use sodiumoxide::hex;
@@ -1131,7 +1131,6 @@ impl RendezvousServer {
         log::debug!("Tcp connection from {:?}, ws: {}", addr, ws);
         let mut rs = self.clone();
         let key = key.to_owned();
-        let (our_pk_b, out_sk_b) = box_::gen_keypair();
         tokio::spawn(async move {
             allow_err!(rs.handle_listener_inner(stream, addr, &key, ws).await);
         });
@@ -1180,12 +1179,10 @@ impl RendezvousServer {
     async fn key_exchange_phase1(&mut self,key: &str, addr: SocketAddr, sink: &mut Option<Sink>) {
         let mut msg_out = RendezvousMessage::new();
 
-        let (key, sk) = Self::get_server_sk(&key);
+        let (_, sk) = Self::get_server_sk(&key);
         match sk {
             Some(sk) => {
                 let our_pk_b = self.our_pk_b.clone();
-                let our_sk_b = self.our_sk_b.clone();
-                let pk = sk.public_key();
                 let sm = sign::sign(&our_pk_b.0, &sk);
 
                 let bytes_sm = Bytes::from(sm);
