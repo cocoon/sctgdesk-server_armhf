@@ -1344,6 +1344,7 @@ impl RendezvousServer {
             //sink = Some(Sink::Stream(&mut stream));
             //sink = Some(Sink::TcpStream(a));
             //sink = Some(Sink::Stream(&mut stream));
+            sink = None;
             
             if !self.key_exchange_phase1_done {
                 self.key_exchange_phase1(key, addr, &mut stream).await;
