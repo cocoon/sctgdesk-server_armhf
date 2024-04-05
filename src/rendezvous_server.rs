@@ -54,11 +54,12 @@ enum Data {
 const REG_TIMEOUT: i32 = 30_000;
 type TcpStreamSink = SplitSink<Framed<TcpStream, BytesCodec>, Bytes>;
 type WsSink = SplitSink<tokio_tungstenite::WebSocketStream<TcpStream>, tungstenite::Message>;
-enum Sink  {
+enum Sink<'a>  {
     TcpStream(TcpStreamSink),
     Ws(WsSink),
-    //Stream(&'a mut FramedStream),
+    Stream(&'a mut FramedStream),
 }
+
 type Sender = mpsc::UnboundedSender<Data>;
 type Receiver = mpsc::UnboundedReceiver<Data>;
 static ROTATION_RELAY_SERVER: AtomicUsize = AtomicUsize::new(0);
@@ -78,7 +79,7 @@ struct Inner {
 
 #[derive(Clone)]
 pub struct RendezvousServer {
-    tcp_punch: Arc<Mutex<HashMap<SocketAddr, Sink>>>,
+    tcp_punch: Arc<Mutex<HashMap<SocketAddr, Sink<'static>>>>,
     pm: PeerMap,
     tx: Sender,
     relay_servers: Arc<RelayServers>,
@@ -696,7 +697,7 @@ impl RendezvousServer {
                     if !rp.id.is_empty() {
                         log::trace!("New peer registered: {:?} {:?}", &rp.id, &addr);
                         //TODO
-                        //self.update_addr(rp.id, addr, socket).await?;
+                        let _ = self.update_addr_tcp(rp.id, addr, stream).await;
                         if self.inner.serial > rp.serial {
                             let mut msg_out = RendezvousMessage::new();
                             msg_out.set_configure_update(ConfigUpdate {
@@ -723,6 +724,50 @@ impl RendezvousServer {
             }
         }
         false
+    }
+
+    #[inline]
+    async fn update_addr_tcp(
+        &mut self,
+        id: String,
+        socket_addr: SocketAddr,
+        stream: &mut FramedStream,
+    ) -> ResultType<()> {
+        let (request_pk, ip_change) = if let Some(old) = self.pm.get_in_memory(&id).await {
+            let mut old = old.write().await;
+            let ip = socket_addr.ip();
+            let ip_change = if old.socket_addr.port() != 0 {
+                ip != old.socket_addr.ip()
+            } else {
+                ip.to_string() != old.info.ip
+            } && !ip.is_loopback();
+            let request_pk = old.pk.is_empty() || ip_change;
+            if !request_pk {
+                old.socket_addr = socket_addr;
+                old.last_reg_time = Instant::now();
+            }
+            let ip_change = if ip_change && old.reg_pk.0 <= 2 {
+                Some(if old.socket_addr.port() == 0 {
+                    old.info.ip.clone()
+                } else {
+                    old.socket_addr.to_string()
+                })
+            } else {
+                None
+            };
+            (request_pk, ip_change)
+        } else {
+            (true, None)
+        };
+        if let Some(old) = ip_change {
+            log::info!("IP change of {} from {} to {}", id, old, socket_addr);
+        }
+        let mut msg_out = RendezvousMessage::new();
+        msg_out.set_register_peer_response(RegisterPeerResponse {
+            request_pk,
+            ..Default::default()
+        });
+        stream.send(&msg_out).await
     }
 
     #[inline]
@@ -966,7 +1011,7 @@ impl RendezvousServer {
     }
 
     #[inline]
-    async fn send_to_sink(sink: &mut Option<Sink>, msg: RendezvousMessage) {
+    async fn send_to_sink(sink: &mut Option<Sink<'_>>, msg: RendezvousMessage) {
         if let Some(sink) = sink.as_mut() {
             if let Ok(bytes) = msg.write_to_bytes() {
                 match sink {
@@ -975,6 +1020,10 @@ impl RendezvousServer {
                     }
                     Sink::Ws(ws) => {
                         allow_err!(ws.send(tungstenite::Message::Binary(bytes)).await);
+                    }
+                    Sink::Stream(framed_stream) => {
+                        //TODO
+                        allow_err!(framed_stream.send(&msg).await);
                     }
                 }
             }
@@ -1292,7 +1341,7 @@ impl RendezvousServer {
             //let (a, mut b) = Framed::new(stream, BytesCodec::new()).split();
             let mut stream = FramedStream::from(stream, addr);
             //let (a, mut b) = &stream.split();
-            sink = None;
+            //sink = Some(Sink::Stream(&mut stream));
             //sink = Some(Sink::TcpStream(a));
             //sink = Some(Sink::Stream(&mut stream));
             
@@ -1349,7 +1398,6 @@ impl RendezvousServer {
                     hex::encode(Bytes::from(msg_out.write_to_bytes().unwrap()))
                 );
                 //TODO
-                //Self::send_to_sink(sink, msg_out).await;
                 let _ = connection.send(&msg_out).await;
             }
             None => {}
