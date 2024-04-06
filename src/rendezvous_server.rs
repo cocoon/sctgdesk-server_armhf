@@ -54,10 +54,34 @@ enum Data {
 const REG_TIMEOUT: i32 = 30_000;
 type TcpStreamSink = SplitSink<Framed<TcpStream, BytesCodec>, Bytes>;
 type WsSink = SplitSink<tokio_tungstenite::WebSocketStream<TcpStream>, tungstenite::Message>;
-enum Sink<'a>  {
+enum Sink<'a> {
     TcpStream(TcpStreamSink),
     Ws(WsSink),
+    // Framed(&'a mut FramedSocket, &'a TargetAddr<'a>),
     Stream(&'a mut FramedStream),
+}
+//
+
+impl Sink<'_> {
+    async fn send(self, msg: &RendezvousMessage) -> ResultType<()> {
+        match self {
+            Sink::TcpStream(mut tcpstream) => {
+                let m_vec8 = msg.write_to_bytes()?;
+                let m_bytes: hbb_common::bytes::Bytes = hbb_common::bytes::Bytes::from(m_vec8);
+                let res = tcpstream.send(m_bytes).await.map_err(hbb_common::anyhow::Error::new);
+                res
+            }
+            Sink::Ws(mut ws) => {
+                let m_vec8 = msg.write_to_bytes()?;
+                let res = ws.send(tungstenite::Message::Binary(m_vec8)).await.map_err(hbb_common::anyhow::Error::new);
+                res
+            }
+            Sink::Stream(stream) => {
+                let res = stream.send(msg).await;
+                res
+            }
+        }
+    }
 }
 
 type Sender = mpsc::UnboundedSender<Data>;
@@ -317,7 +341,7 @@ impl RendezvousServer {
             }
         }
     }
-    
+
     #[inline]
     async fn handle_udp(
         &mut self,
@@ -497,7 +521,7 @@ impl RendezvousServer {
             match msg_in.union {
                 Some(rendezvous_message::Union::PunchHoleRequest(ph)) => {
                     // there maybe several attempt, so sink can be none
-                    // TODO
+                    // TODO take the write stream
                     // if let Some(sink) = sink.take() {
                     //     self.tcp_punch.lock().await.insert(try_into_v4(addr), sink);
                     // }
@@ -511,7 +535,7 @@ impl RendezvousServer {
                 }
                 Some(rendezvous_message::Union::RequestRelay(mut rf)) => {
                     // there maybe several attempt, so sink can be none
-                    // TODO
+                    // TODO take the write stream
                     // if let Some(sink) = sink.take() {
                     //     self.tcp_punch.lock().await.insert(try_into_v4(addr), sink);
                     // }
@@ -587,7 +611,7 @@ impl RendezvousServer {
                     }
                     msg_out.set_test_nat_response(res);
                     //Self::send_to_sink(sink, msg_out).await;
-                    stream.send(&msg_out).await;
+                    let _ = stream.send(&msg_out).await;
                     return true;
                 }
                 Some(rendezvous_message::Union::RegisterPk(rk)) => {
@@ -705,8 +729,9 @@ impl RendezvousServer {
                                 rendezvous_servers: (*self.rendezvous_servers).clone(),
                                 ..Default::default()
                             });
-                            let _ = stream.send(&msg_out).await;
-                            return true
+                            // TODO handle return
+                            let res = stream.send(&msg_out).await;
+                            return res.is_ok();
                         }
                     }
                 }
@@ -738,7 +763,7 @@ impl RendezvousServer {
             match msg_in.union {
                 Some(rendezvous_message::Union::PunchHoleRequest(ph)) => {
                     // there maybe several attempt, so sink can be none
-                    //TODO
+                    //TODO take write stream
                     // if let Some(sink) = sink.take() {
                     //     self.tcp_punch.lock().await.insert(try_into_v4(addr), sink);
                     // }
@@ -747,7 +772,7 @@ impl RendezvousServer {
                 }
                 Some(rendezvous_message::Union::RequestRelay(mut rf)) => {
                     // there maybe several attempt, so sink can be none
-                    //TODO
+                    //TODO take write stream
                     // if let Some(sink) = sink.take() {
                     //     self.tcp_punch.lock().await.insert(try_into_v4(addr), sink);
                     // }
@@ -1417,25 +1442,23 @@ impl RendezvousServer {
         let mut sink;
         if ws {
             let ws_stream = tokio_tungstenite::accept_async(stream).await?;
-            let (a, mut b) = ws_stream.split();
-            sink = Some(Sink::Ws(a));
-            while let Ok(Some(Ok(msg))) = timeout(30_000, b.next()).await {
+            let (write, mut read) = ws_stream.split();
+            sink = Some(Sink::Ws(write));
+            while let Ok(Some(Ok(msg))) = timeout(30_000, read.next()).await {
                 if let tungstenite::Message::Binary(bytes) = msg {
-                // TODO
+                    // TODO
                     if !self.handle_tcp_ws(&bytes, &mut sink, addr, key, ws).await {
                         break;
                     }
-                 }
+                }
             }
         } else {
-            //let (a, mut b) = Framed::new(stream, BytesCodec::new()).split();
-            let mut stream = FramedStream::from(stream, addr);
-            //let (a, mut b) = &stream.split();
             //sink = Some(Sink::Stream(&mut stream));
             //sink = Some(Sink::TcpStream(a));
             //sink = Some(Sink::Stream(&mut stream));
+            let mut stream = FramedStream::from(stream, addr);
+            //sink = Some(Sink::Stream(&mut stream));
             sink = None;
-            
             if !self.key_exchange_phase1_done {
                 self.key_exchange_phase1(key, addr, &mut stream).await;
                 self.key_exchange_phase1_done = true;
@@ -1445,12 +1468,11 @@ impl RendezvousServer {
                     // handle KeyExchange phase 2
                     self.key_exchange_phase2(addr, &mut stream, &bytes).await;
                     log::debug!("Is connection secured: {:?}", stream.is_secured());
-                } 
-                else if !self.handle_tcp(&bytes, &mut stream, addr, key, ws).await {
+                } else if !self.handle_tcp(&bytes, &mut stream, addr, key, ws).await {
                     break;
                 }
-
             }
+
             // while let Ok(Some(Ok(bytes))) = timeout(30_000, b.next()).await {
             //     if !self.handle_tcp(&bytes, &mut sink, addr, key, ws).await {
             //         break;
@@ -1488,7 +1510,7 @@ impl RendezvousServer {
                     addr,
                     hex::encode(Bytes::from(msg_out.write_to_bytes().unwrap()))
                 );
-                //TODO
+                //TODO handle return
                 let _ = connection.send(&msg_out).await;
             }
             None => {}
@@ -1690,17 +1712,14 @@ async fn send_rk_res(
 }
 
 #[inline]
-async fn send_rk_res_tcp(
-    stream: &mut FramedStream,
-    res: register_pk_response::Result,
-) -> bool {
+async fn send_rk_res_tcp(stream: &mut FramedStream, res: register_pk_response::Result) -> bool {
     let mut msg_out = RendezvousMessage::new();
     msg_out.set_register_pk_response(RegisterPkResponse {
         result: res.into(),
         ..Default::default()
     });
-    stream.send(&msg_out).await;
-    true
+    let res = stream.send(&msg_out).await;
+    res.is_ok()
 }
 
 async fn create_udp_listener(port: i32, rmem: usize) -> ResultType<FramedSocket> {
