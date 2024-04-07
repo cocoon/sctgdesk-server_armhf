@@ -32,6 +32,8 @@ use hbb_common::{
 };
 use ipnetwork::Ipv4Network;
 
+use proxy_protocol::version2::ProxyAddresses;
+use proxy_protocol::ProxyHeader;
 use sodiumoxide::crypto::box_;
 use sodiumoxide::crypto::secretbox;
 use sodiumoxide::crypto::sign;
@@ -68,12 +70,18 @@ impl Sink<'_> {
             Sink::TcpStream(mut tcpstream) => {
                 let m_vec8 = msg.write_to_bytes()?;
                 let m_bytes: hbb_common::bytes::Bytes = hbb_common::bytes::Bytes::from(m_vec8);
-                let res = tcpstream.send(m_bytes).await.map_err(hbb_common::anyhow::Error::new);
+                let res = tcpstream
+                    .send(m_bytes)
+                    .await
+                    .map_err(hbb_common::anyhow::Error::new);
                 res
             }
             Sink::Ws(mut ws) => {
                 let m_vec8 = msg.write_to_bytes()?;
-                let res = ws.send(tungstenite::Message::Binary(m_vec8)).await.map_err(hbb_common::anyhow::Error::new);
+                let res = ws
+                    .send(tungstenite::Message::Binary(m_vec8))
+                    .await
+                    .map_err(hbb_common::anyhow::Error::new);
                 res
             }
             Sink::Stream(stream) => {
@@ -113,6 +121,7 @@ pub struct RendezvousServer {
     our_pk_b: box_::PublicKey,
     our_sk_b: box_::SecretKey,
     key_exchange_phase1_done: bool,
+    real_addr: Option<SocketAddr>,
 }
 
 enum LoopFailure {
@@ -171,6 +180,7 @@ impl RendezvousServer {
             our_pk_b,
             our_sk_b,
             key_exchange_phase1_done: false,
+            real_addr: None,
         };
         log::info!("mask: {:?}", rs.inner.mask);
         log::info!("local-ip: {:?}", rs.inner.local_ip);
@@ -1453,31 +1463,68 @@ impl RendezvousServer {
                 }
             }
         } else {
-            //sink = Some(Sink::Stream(&mut stream));
-            //sink = Some(Sink::TcpStream(a));
-            //sink = Some(Sink::Stream(&mut stream));
-            let mut stream = FramedStream::from(stream, addr);
+            let proxy_v2 = get_arg("proxyv2");
+            log::debug!("proxy_v2: {:?}", proxy_v2);
+
             //sink = Some(Sink::Stream(&mut stream));
             sink = None;
-            if !self.key_exchange_phase1_done {
-                self.key_exchange_phase1(key, addr, &mut stream).await;
-                self.key_exchange_phase1_done = true;
-            }
-            while let Ok(Some(Ok(bytes))) = timeout(30_000, stream.next()).await {
-                if !stream.is_secured() && self.key_exchange_phase1_done {
-                    // handle KeyExchange phase 2
-                    self.key_exchange_phase2(addr, &mut stream, &bytes).await;
-                    log::debug!("Is connection secured: {:?}", stream.is_secured());
-                } else if !self.handle_tcp(&bytes, &mut stream, addr, key, ws).await {
-                    break;
+            if proxy_v2 == "true" && self.real_addr.is_none() {
+                let mut buf_bytes = BytesMut::with_capacity(1024);
+                let mut stream = TcpStream::from(stream);
+                stream.read_buf(&mut buf_bytes).await?;
+                if let Ok(header) = proxy_protocol::parse(&mut buf_bytes) {
+                    match header {
+                        ProxyHeader::Version2 {
+                            command,
+                            transport_protocol,
+                            addresses,
+                        } => {
+                            log::debug!("Received a proxied connection with a HAProxy V2 header");
+                            log::debug!("Command: {:?}", command);
+                            log::debug!("Transport Protocol: {:?}", transport_protocol);
+                            log::debug!("Addresses: {:?}", addresses);
+                            match addresses {
+                                ProxyAddresses::Ipv4 { source, .. } => {
+                                    self.real_addr = Some(source.into());
+                                }
+                                ProxyAddresses::Ipv6 { source, .. } => {
+                                    self.real_addr = Some(source.into());
+                                }
+                                _ => {}
+                            }
+                        }
+                        _ => {}
+                    }
+                }
+            } else {
+                // if self.real_addr is None, the connection is not proxied
+                // so use address from accept()
+                // else use self.real_addr
+                let real_addr: SocketAddr;
+                if self.real_addr.is_some() {
+                    real_addr = self.real_addr.unwrap();
+                } else {
+                    real_addr = addr;
+                }
+                let mut stream = FramedStream::from(stream, real_addr);
+                if !self.key_exchange_phase1_done {
+                    self.key_exchange_phase1(key, real_addr, &mut stream).await;
+                    self.key_exchange_phase1_done = true;
+                }
+                while let Ok(Some(Ok(bytes))) = timeout(30_000, stream.next()).await {
+                    if !stream.is_secured() && self.key_exchange_phase1_done {
+                        // handle KeyExchange phase 2
+                        self.key_exchange_phase2(real_addr, &mut stream, &bytes)
+                            .await;
+                        log::debug!("Is connection secured: {:?}", stream.is_secured());
+                    } else if !self
+                        .handle_tcp(&bytes, &mut stream, real_addr, key, ws)
+                        .await
+                    {
+                        break;
+                    }
                 }
             }
-
-            // while let Ok(Some(Ok(bytes))) = timeout(30_000, b.next()).await {
-            //     if !self.handle_tcp(&bytes, &mut sink, addr, key, ws).await {
-            //         break;
-            //     }
-            // }
         }
         if sink.is_none() {
             self.tcp_punch.lock().await.remove(&try_into_v4(addr));
