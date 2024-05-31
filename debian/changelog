@@ -1,3 +1,7 @@
+rustdesk-server (1.1.99-29) UNRELEASED; urgency=low
+
+  * show shared address books in webconsole
+  
 rustdesk-server (1.1.99-28) UNRELEASED; urgency=low
 
   * propagate version
