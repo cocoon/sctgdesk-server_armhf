@@ -52,6 +52,12 @@ For all api or webconsole related issues, please refer to the [sctgdesk-api-serv
 
 <img width="1089" alt="Capture d’écran 2024-05-24 à 11 49 13" src="https://github.com/sctg-development/sctgdesk-server/assets/165936401/db13010b-077a-4e14-943b-9d8de3266f82">
 
+<img width="730" alt="Capture d’écran 2024-05-31 à 20 12 59" src="https://github.com/sctg-development/sctgdesk-server/assets/165936401/1e3f6658-e0f0-4cf3-8684-cbc85202dbe9">
+
+<img width="621" alt="Capture d’écran 2024-05-31 à 20 13 40" src="https://github.com/sctg-development/sctgdesk-server/assets/165936401/4ea84500-8fb2-4dfa-b057-db1401b88a74">
+
+
+
 ### Api documentation
 
 <img width="1502" alt="apidoc" src="https://github.com/sctg-development/sctgdesk-server/assets/165936401/88fe7910-fe62-43e5-a16c-70dc1201e040">
