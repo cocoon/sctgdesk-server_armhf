@@ -70,6 +70,35 @@ For all api or webconsole related issues, please refer to the [sctgdesk-api-serv
 
 <img width="927" alt="Capture d’écran 2024-05-24 à 12 07 32" src="https://github.com/sctg-development/sctgdesk-server/assets/165936401/f447f5fa-bc77-4bc6-858a-c6cadf9b7f6c">
 
+## Generating autoupdate links
+
+We modified our client to retrieve the autoupdate links from the api server rather from Github releases.  
+For having the autoupdate links working, you need to modify your client to retrieve the autoupdate links from the api server. This [how you can do it](https://github.com/sctg-development/sctgdesk/blob/481d3516fef1daa145d8044594187cb11959f8be/src/common.rs#L953L972):
+
+```rust
+// src/common.rs
+#[tokio::main(flavor = "current_thread")]
+async fn check_software_update_() -> hbb_common::ResultType<()> {
+    let url=format!("{}/api/software/releases/latest",get_api_server("".to_owned(), "".to_owned())).to_owned();
+    log::info!("URL for checking software updates: {}", url);
+    //let url = "https://github.com/rustdesk/rustdesk/releases/latest";
+    let latest_release_response = create_http_client_async().get(url).send().await?;
+    let latest_release_version = latest_release_response
+        .url()
+        .path()
+        .rsplit('/')
+        .next()
+        .unwrap_or_default();
+
+    let response_url = latest_release_response.url().to_string();
+
+    if get_version_number(&latest_release_version) > get_version_number(crate::VERSION) {
+        *SOFTWARE_UPDATE_URL.lock().unwrap() = response_url;
+    }
+    Ok(())
+}
+```
+
 # Security
 
 The embedded API server is not secured nor protected agains DDOS attacks. A good practice is to use a reverse proxy in front of the API server. NGINX is a good choice for this purpose. HAProxy is also a good choice.  
