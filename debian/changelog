@@ -1,3 +1,7 @@
+rustdesk-server (1.1.99-33) UNRELEASED; urgency=low
+
+  * populate the dashboard
+
 rustdesk-server (1.1.99-32) UNRELEASED; urgency=low
 
   * update api server for redirecting to the software download page
