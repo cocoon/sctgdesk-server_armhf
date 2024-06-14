@@ -51,7 +51,7 @@ jobs:
     - name: Build
       run: |
         cargo update -p sctgdesk-api-server
-        DATABASE_URL=sqlite://$(pwd)/db_v2.sqlite3 cargo build --release --target ${{ matrix.arch }}-pc-windows-msvc
+        set "DATABASE_URL=sqlite://%CD%/db_v2.sqlite3" && cargo build --release --target ${{ matrix.arch }}-pc-windows-msvc
         cd target/${{ matrix.arch }}-pc-windows-msvc/release
         7z a -tzip /tmp/windows_${{ matrix.arch }}_${{ github.event.release.tag_name }}.zip hbbs.exe hbbr.exe rustdesk-utils.exe
 
