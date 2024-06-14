@@ -1,3 +1,7 @@
+rustdesk-server (1.1.99-37) UNRELEASED; urgency=low
+
+  * can rename a shared address book
+  
 rustdesk-server (1.1.99-36) UNRELEASED; urgency=low
 
   * can copy rules uuid
