@@ -11,3 +11,4 @@ db_v2.sqlite3
 test.*
 .oauth2.toml
 .idea
+data

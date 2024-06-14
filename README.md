@@ -80,14 +80,16 @@ and start the server with:
 
 ```bash
 mkdir -p data
-docker-compose up -d
+docker-compose up 
 ```
+
+**Note**: *There is an issue with the first start of the server. The server will not start correctly. You need to stop the server and start it again. This is a known issue and we are working on it. The issue is related to the database and config files initialization. While the server is starting, the database and config files are not yet initialized. The server will start correctly on the next starts.*
 
 ## API Standalone version
 
-The api standalone version is a version of the server that includes the API server and the webconsole but not the rendez-vous server.   
-The standalone version is available in its own repository [sctgdesk-api-server](https://github.com/sctg-development/sctgdesk-api-server).
-For all api or webconsole related issues, please refer to the [sctgdesk-api-server](https://github.com/sctg-development/sctgdesk-api-server) repository.
+The api standalone version is a version of the server that includes the API server and the webconsole but not the rendez-vous server.  
+The standalone version is available in its own repository [sctgdesk-api-server](https://github.com/sctg-development/sctgdesk-api-server).  
+For all api or webconsole related issues, please refer to the [sctgdesk-api-server](https://github.com/sctg-development/sctgdesk-api-server) repository.  
 
 ## Screenshots
 
