@@ -1,3 +1,7 @@
+rustdesk-server (1.1.99-36) UNRELEASED; urgency=low
+
+  * can copy rules uuid
+  
 rustdesk-server (1.1.99-35) UNRELEASED; urgency=low
 
   * handle creation and deletion of shared address books in webconsole
