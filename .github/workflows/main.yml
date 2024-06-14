@@ -1,0 +1,17 @@
+name: Main Workflow
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  docker_build_and_release:
+    uses: ./.github/workflows/multiarch-docker-hub.yml
+    secrets: inherit
+    
+  macos_intel_build_and_release:
+    uses: ./.github/workflows/macos-intel-build.yml
+    secrets: inherit
+#   windows_build_and_release:
+#     uses: ./.github/workflows/windows-build.yml
+#     secrets: inherit

@@ -1,0 +1,61 @@
+name: Build
+on:
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install Rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: stable
+        override: true
+    - name: Cache cargo registry
+      uses: actions/cache@v4
+      with:
+        path: ~/.cargo/registry
+        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+    - name: Cache cargo index
+      uses: actions/cache@v4
+      with:
+        path: ~/.cargo/git
+        key: ${{ runner.os }}-cargo-git-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Cache cargo build
+      uses: actions/cache@v4
+      with:
+        path: target
+        key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Install Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Build
+      run: |
+        cargo update -p sctgdesk-api-server
+        DATABASE_URL=sqlite://$(pwd)/db_v2.sqlite3 cargo build --release
+        cd target/relase
+        zip -r /tmp/macos_intel_${{ github.event.release.tag_name }}_arm64.zip hbbs hbbr rustdesk-utils
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: macos_intel_${{ github.event.release.tag_name }}
+        path: target/release/
+
+    - name: Upload Release Assets binaries for Macos amd64
+      uses: softprops/action-gh-release@v2
+      continue-on-error: true
+      with:
+        files: |
+            /tmp/macos_intel_${{ github.event.release.tag_name }}_arm64.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

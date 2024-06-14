@@ -7,10 +7,18 @@
 # To get a newer version, you must update the SHA.
 # You can also reference a tag or a branch, but the action can change without warning.
 
-name: Publish amd64/arm64 to docker Hub
+name: Generate multi-arch Docker image and release linux binaries
 on:
-  release:
-    types: [published]
+  # release:
+  #   types: [published]
+  workflow_call:
+    secrets:
+      DOCKER_USERNAME:
+        required: true
+      DOCKER_PASSWORD:
+        required: true
+      DOCKER_IMAGE:
+        required: true
 jobs:
   push_to_registry:
     name: Push Docker image to Docker Hub
