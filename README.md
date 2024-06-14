@@ -32,6 +32,57 @@ You can browse the API documentation in the builtins API server at the address `
 
 A non interactive API documentation is available at [sctgdesk-api-server repo](https://sctg-development.github.io/sctgdesk-api-server/).
 
+## TL;DR
+
+You can use the following `docker-compose.yml` file to start the server:
+
+```yaml
+version: '3'
+
+networks:
+  sctgdesk-net:
+    external: false
+
+services:
+  hbbs:
+    container_name: hbbs
+    ports:
+      - 21114:21114
+      - 21115:21115
+      - 21116:21116
+      - 21116:21116/udp
+      - 21118:21118
+    image: sctg/sctgdesk-server:latest
+    command: hbbs -r sctgdesk.example.com:21117
+    volumes:
+      - ./data:/usr/local/share/sctgdesk
+    networks:
+      - sctgdesk-net
+    depends_on:
+      - hbbr
+    restart: unless-stopped
+
+  hbbr:
+    container_name: hbbr
+    ports:
+      - 21117:21117
+      - 21119:21119
+    image: sctg/sctgdesk-server:latest
+    command: hbbr
+    volumes:
+      - ./data:/usr/local/share/sctgdesk
+    networks:
+      - sctgdesk-net
+    restart: unless-stopped
+```
+
+and start the server with:
+
+```bash
+mkdir -p data
+docker-compose up -d
+```
+
 ## API Standalone version
 
 The api standalone version is a version of the server that includes the API server and the webconsole but not the rendez-vous server.   
