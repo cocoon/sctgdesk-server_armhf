@@ -27,7 +27,7 @@ This is a modified version of RustDesk Server, which is free and open source.
     * read-only, read-write, admin (currently rules need to be set manually in the database)
 * The third difference is that this version includes a preliminary implementation of a simple webconsole.  
 
-The webconsole is accessible at the address `http://<server-ip>:21114/`.  
+The webconsole is accessible at the address `http://<server-ip>:21114/` with login "admin" and password "Hello,world!" .  
 You can browse the API documentation in the builtins API server at the address `http://<server-ip>:21114/api/doc/`.  
 
 A non interactive API documentation is available at [sctgdesk-api-server repo](https://sctg-development.github.io/sctgdesk-api-server/).
