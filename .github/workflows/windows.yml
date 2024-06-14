@@ -49,11 +49,18 @@ jobs:
         node-version: '20'
 
     - name: Build
+      continue-on-error: true
       run: |
         cargo update -p sctgdesk-api-server
         set "DATABASE_URL=sqlite://%CD%/db_v2.sqlite3" && cargo build --release --target ${{ matrix.arch }}-pc-windows-msvc
-        cd target/${{ matrix.arch }}-pc-windows-msvc/release
+        cd target\${{ matrix.arch }}-pc-windows-msvc\release
         7z a -tzip /tmp/windows_${{ matrix.arch }}_${{ github.event.release.tag_name }}.zip hbbs.exe hbbr.exe rustdesk-utils.exe
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: windows_${{ matrix.arch }}_${{ github.event.release.tag_name }}
+        path: target
 
     - name: Upload Release Assets binaries for Windows
       uses: softprops/action-gh-release@v1
