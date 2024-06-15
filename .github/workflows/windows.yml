@@ -58,7 +58,7 @@ jobs:
       id: vcpkg
       continue-on-error: true
       with:
-        pkgs: libsodium:1.0.20
+        pkgs: libsodium_1_0_20
         triplet: ${{ matrix.job.vcpkg_triplet }}
         token: ${{ github.token }}
         github-binarycache: true
