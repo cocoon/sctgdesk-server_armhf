@@ -58,11 +58,11 @@ jobs:
         cd target\${{ matrix.arch }}-pc-windows-msvc\release
         7z a -tzip /tmp/windows_${{ matrix.arch }}_${{ github.event.release.tag_name }}.zip hbbs.exe hbbr.exe rustdesk-utils.exe
 
-    - name: Upload artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: windows_${{ matrix.arch }}_${{ github.event.release.tag_name }}
-        path: target
+    # - name: Upload artifact
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: windows_${{ matrix.arch }}_${{ github.event.release.tag_name }}
+    #     path: target
 
     - name: Upload Release Assets binaries for Windows
       uses: softprops/action-gh-release@v1
