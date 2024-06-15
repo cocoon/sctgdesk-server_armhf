@@ -282,7 +282,7 @@ Three executables will be generated in target/release.
 - hbbr - RustDesk relay server
 - rustdesk-utils - RustDesk CLI utilities
 
-You can find updated binaries on the [releases](https://github.com/rustdesk/rustdesk-server/releases) page.
+You can find updated binaries on the [releases](https://github.com/sctg-development/sctgdesk-server/releases) page.
 
 If you want extra features [RustDesk Server Pro](https://rustdesk.com/pricing.html) might suit you better.
 
