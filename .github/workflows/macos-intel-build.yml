@@ -1,6 +1,9 @@
 name: Build for MacOS Intel and Apple Silicon
 on:
   workflow_call:
+  push:
+    branches:
+      - tcpserver-master-build
 
 jobs:
   build:
