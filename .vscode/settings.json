@@ -5,5 +5,8 @@
     "rust.useNewErrorFormat": true,
     "terminal.integrated.env.osx": {
         "DATABASE_URL":"sqlite://${workspaceFolder}/db_v2.sqlite3"
-    }
+    },
+    "terminal.integrated.env.windows": {
+        "DATABASE_URL":"sqlite://${workspaceFolder}/db_v2.sqlite3"
+    },
 }
