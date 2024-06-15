@@ -9,9 +9,9 @@
 
 name: Generate multi-arch Docker image and release linux binaries
 on:
-  push:
-    branches:
-      - tcpserver-master-build
+  # push:
+  #   branches:
+  #     - tcpserver-master-build
   workflow_call:
     secrets:
       DOCKER_USERNAME:
