@@ -50,3 +50,12 @@ jobs:
       run: |
         cargo update -p sctgdesk-api-server
         DATABASE_URL=sqlite://$(pwd)/db_v2.sqlite3 cargo build --release
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: ubuntu_amd64
+        path: |
+          target/release/hbbs
+          target/release/hbbr
+          target/release/rustdesk-utils

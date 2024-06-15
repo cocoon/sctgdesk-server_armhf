@@ -54,11 +54,14 @@ jobs:
         cd target/release
         zip -r /tmp/macos_${{ matrix.job.arch }}_${{ github.event.release.tag_name }}.zip hbbs hbbr rustdesk-utils
 
-    # - name: Upload artifact
-    #   uses: actions/upload-artifact@v2
-    #   with:
-    #     name: macos_${{ matrix.job.arch }}_${{ github.event.release.tag_name }}
-    #     path: target/release/
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: macos_${{ matrix.job.arch }}_${{ github.event.release.tag_name }}
+        path: |
+          target/release/hbbs
+          target/release/hbbr
+          target/release/rustdesk-utils
 
     - name: Upload Release Assets binaries for Macos amd64
       uses: softprops/action-gh-release@v2
