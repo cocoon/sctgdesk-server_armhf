@@ -1,4 +1,4 @@
-name: Build for Windows 64-bit and 32-bit
+name: Build for Windows 64-bit # and 32-bit
 on:
   workflow_call:
   push:
@@ -13,7 +13,7 @@ jobs:
       matrix:
         job:
           - { vcpkg_triplet: x64-windows-static-release , arch: x86_64 }
-          - { vcpkg_triplet: x86-windows-static-release , arch: i686 }
+          # - { vcpkg_triplet: x86-windows-static-release , arch: i686 }
 
     steps:
     - name: Checkout code
@@ -52,16 +52,6 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '20'
-
-    - name: vcpkg build
-      uses: johnwason/vcpkg-action@v6
-      id: vcpkg
-      continue-on-error: true
-      with:
-        pkgs: libsodium_1_0_20
-        triplet: ${{ matrix.job.vcpkg_triplet }}
-        token: ${{ github.token }}
-        github-binarycache: true
 
     - name: Build
       continue-on-error: true
