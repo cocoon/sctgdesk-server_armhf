@@ -51,6 +51,14 @@ jobs:
       with:
         node-version: '20'
 
+    - name: Setup vcpkg with Github Actions binary cache
+      uses: lukka/run-vcpkg@v11
+
+    - name: Install vcpkg dependencies
+      run: |
+          $VCPKG_ROOT/vcpkg install --triplet ${{ matrix.arch }}-pc-windows-msvc libsodium:${{ matrix.arch }}-windows
+      shell: bash
+
     - name: Build
       continue-on-error: true
       shell: cmd
