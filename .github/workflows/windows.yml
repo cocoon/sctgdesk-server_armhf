@@ -12,8 +12,8 @@ jobs:
       fail-fast: false
       matrix:
         job:
-          - { vcpkg_triplet: x64 , arch: x86_64 }
-          - { vcpkg_triplet: x86 , arch: i686 }
+          - { vcpkg_triplet: x64-windows-static-release , arch: x86_64 }
+          - { vcpkg_triplet: x86-windows-static-release , arch: i686 }
 
     steps:
     - name: Checkout code
