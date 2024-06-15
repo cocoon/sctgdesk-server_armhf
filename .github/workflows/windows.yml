@@ -74,7 +74,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ubuntu_amd64
+        name: windows_${{ matrix.arch }}
         path: |
           target/${{ matrix.arch }}-pc-windows-msvc/release/hbbs.exe
           target/${{ matrix.arch }}-pc-windows-msvc/release/hbbr.exe
