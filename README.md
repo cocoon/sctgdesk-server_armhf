@@ -270,7 +270,7 @@ First you need to have a working Rust development toolchain and a Node ≥ 20 wo
 DATABASE_URL=sqlite://$(pwd)/db_v2.sqlite3 cargo build --release
 ```
 
-- Windows:
+- Windows with cmd.exe shell:
 
 ```cmd
 set "DATABASE_URL=sqlite://%CD%/db_v2.sqlite3" && cargo build --release
