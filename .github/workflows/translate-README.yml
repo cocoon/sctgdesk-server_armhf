@@ -1,9 +1,10 @@
 name: Translate README
 
 on:
+  workflow_dispatch:
   push:
     branches:
-      - main
+      - tcpserver-master-build
     paths:
       - 'README.md'
 
