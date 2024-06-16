@@ -264,13 +264,13 @@ Self-host your own RustDesk server, it is free and open source.
 
 First you need to have a working Rust development toolchain and a Node ≥ 20 working installation.  
 
-- Unices (Linux, MacOS, etc.):
+* Unices (Linux, MacOS, etc.):
 
 ```bash
 DATABASE_URL=sqlite://$(pwd)/db_v2.sqlite3 cargo build --release
 ```
 
-- Windows with cmd.exe shell:
+* Windows with cmd.exe shell:
 
 ```cmd
 set "DATABASE_URL=sqlite://%CD%/db_v2.sqlite3" && cargo build --release
@@ -278,9 +278,9 @@ set "DATABASE_URL=sqlite://%CD%/db_v2.sqlite3" && cargo build --release
 
 Three executables will be generated in target/release.
 
-- hbbs - RustDesk ID/Rendezvous server with API server
-- hbbr - RustDesk relay server
-- rustdesk-utils - RustDesk CLI utilities
+* hbbs - RustDesk ID/Rendezvous server with API server
+* hbbr - RustDesk relay server
+* rustdesk-utils - RustDesk CLI utilities
 
 You can find updated binaries on the [releases](https://github.com/sctg-development/sctgdesk-server/releases) page.
 
@@ -396,9 +396,9 @@ Secret Key:  egAVd44u33ZEUIDTtksGcHeVeAwywarEdHmf99KM5ajwEsuG3NQFT9coAfiZ6nen4hf
 Separate .deb packages are available for each binary, you can find them in the [releases](https://github.com/sctg-development/sctgdesk-server/releases).
 These packages are meant for the following distributions:
 
-- Ubuntu 22.04 LTS
-- MacOS Intel or Apple Silicon
-- Windows x86_64 or i686
+* Ubuntu 22.04 LTS
+* MacOS Intel or Apple Silicon
+* Windows x86_64 or i686
 
 ## ENV variables
 
