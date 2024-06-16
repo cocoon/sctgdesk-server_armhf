@@ -1,95 +1,64 @@
 <p align="center">
-  <a href="#manuelles-erstellen">Erstellen</a> •
-  <a href="#docker-image">Docker</a> •
-  <a href="#s6-overlay-basierte-images">S6-Overlay</a> •
-  <a href="#ein-schlüsselpaar-erstellen">Schlüsselpaar</a> •
-  <a href="#debian-pakete">Debian-Pakete</a> •
-  <a href="#umgebungsvariablen">Umgebungsvariablen</a><br>
-  [<a href="README.md">English</a>] | [<a href="README-NL.md">Nederlands</a>] | [<a href="README-TW.md">繁體中文</a>] | [<a href="README-ZH.md">简体中文</a>]<br>
+  <a href="#how-to-build-manually">Manually</a> •
+  <a href="#docker-images">Docker</a> •
+  <a href="#how-to-create-a-keypair">Keypair</a> •
+  <a href="#packages">Binaries</a> •
+  <a href="#env-variables">Variables</a><br>
+  [<a href="README-DE.md">Deutsch</a>] | [<a href="README-NL.md">Nederlands</a>] | [<a href="README-TW.md">繁體中文</a>] | [<a href="README-ZH.md">简体中文</a>]<br>
 </p>
 
-# RustDesk Server-Programm
+# SctgDesk Server-Programm
 
-[![build](https://github.com/rustdesk/rustdesk-server/actions/workflows/build.yaml/badge.svg)](https://github.com/rustdesk/rustdesk-server/actions/workflows/build.yaml)
+[![build](https://github.com/sctg-development/sctgdesk-server/actions/workflows/multiarch-docker-hub.yml/badge.svg)](https://github.com/sctg-development/sctgdesk-server/actions/workflows/multiarch-docker-hub.yml)
+[![build](https://github.com/sctg-development/sctgdesk-server/actions/workflows/macos-intel-build.yml/badge.svg)](https://github.com/sctg-development/sctgdesk-server/actions/workflows/macos-intel-build.yml)
+[![build](https://github.com/sctg-development/sctgdesk-server/actions/workflows/windows.yml/badge.svg)](https://github.com/sctg-development/sctgdesk-server/actions/workflows/windows.yml)
 
-[**Herunterladen**](https://github.com/rustdesk/rustdesk-server/releases)
+[**Binärer Download**](https://github.com/sctg-development/sctgdesk-server/releases)
 
-[**Handbuch**](https://rustdesk.com/docs/de/self-host/)
+[**API-Dokumentation**](https://sctg-development.github.io/sctgdesk-api-server/)
 
-[**FAQ**](https://github.com/rustdesk/rustdesk/wiki/FAQ)
+Dies ist eine modifizierte Version von RustDesk Server, die kostenlos und Open Source ist.
 
-Hosten Sie Ihren eigenen RustDesk-Server selbst, er ist kostenlos und quelloffen.
+*   Der erste Unterschied besteht darin, dass diese Version die neue *tcp* -Modus in der RustDesk Server Pro-Version enthalten.
+*   Der zweite Unterschied besteht darin, dass diese Version eine vorläufige Implementierung des Rustdesk Server Pro API-Servers enthält.
+    *   Unterstützung für das persönliche Adressbuch
+    *   Unterstützung für freigegebenes Adressbuch auf Gruppenebene
+        *   schreibgeschützt, Lese-/Schreibzugriff, admin
+    *   Unterstützung für freigegebenes Adressbuch auf Benutzerebene
+        *   schreibgeschützt, Lese-/Schreibzugriff, admin
+*   Der dritte Unterschied besteht darin, dass diese Version eine vorläufige Implementierung einer einfachen Webkonsole enthält.
 
-## Manuelles Erstellen
+Die Webkonsole ist unter der Adresse `http://<server-ip>:21114/` mit Login "admin" und Passwort "Hello,world!" .\
+Sie können die API-Dokumentation im integrierten API-Server unter der Adresse `http://<server-ip>:21114/api/doc/`.
 
-```bash
-cargo build --release
-```
+Eine nicht-interaktive API-Dokumentation finden Sie unter [sctgdesk-api-server-Repository](https://sctg-development.github.io/sctgdesk-api-server/).
 
-In target/release werden drei ausführbare Dateien erzeugt.
+## TL; DR
 
-- hbbs - RustDesk ID/Rendezvous-Server
-- hbbr - RustDesk Relay-Server
-- rustdesk-utils - RustDesk CLI-Utilities
-
-[Hier](https://github.com/rustdesk/rustdesk-server/releases) finden Sie aktualisierte Binärdateien.
-
-Wenn Sie Ihren eigenen Server entwickeln wollen, könnte [rustdesk-server-demo](https://github.com/rustdesk/rustdesk-server-demo) ein besserer und einfacherer Start für Sie sein als dieses Repository.
-
-## Docker-Image
-
-Docker-Images werden automatisch generiert und bei jedem Github-Release veröffentlicht. Wir haben 2 Arten von Images.
-
-### Klassisches Image
-
-Diese Images sind mit `Ubuntu 20.04` gebaut, mit dem Zusatz der wichtigen Binärdateien (`hbbr` und `hbbs`). Sie sind auf [Docker hub](https://hub.docker.com/r/rustdesk/rustdesk-server/) mit diesen Tags verfügbar:
-
-| Architektur | Image:Tag |
-| --- | --- |
-| amd64 | `rustdesk/rustdesk-server:latest` |
-| arm64v8 | `rustdesk/rustdesk-server:latest-arm64v8` |
-
-Sie können diese Images direkt mit `docker run` mit diesen Befehlen starten:
-
-```bash
-docker run --name hbbs --net=host -v "$PWD/data:/root" -d rustdesk/rustdesk-server:latest hbbs -r <relay-server-ip[:port]> 
-docker run --name hbbr --net=host -v "$PWD/data:/root" -d rustdesk/rustdesk-server:latest hbbr 
-```
-
-Oder ohne `--net=host`, aber die P2P-Direktverbindung kann dann nicht funktionieren.
-
-Bei Systemen, die SELinux verwenden, muss `/root` durch `/root:z` ersetzt werden, damit die Container korrekt laufen. Alternativ kann die SELinux-Containertrennung durch Hinzufügen der Option `--security-opt label=disable` vollständig deaktiviert werden.
-
-```bash
-docker run --name hbbs -p 21115:21115 -p 21116:21116 -p 21116:21116/udp -p 21118:21118 -v "$PWD/data:/root" -d rustdesk/rustdesk-server:latest hbbs -r <relay-server-ip[:port]> 
-docker run --name hbbr -p 21117:21117 -p 21119:21119 -v "$PWD/data:/root" -d rustdesk/rustdesk-server:latest hbbr 
-```
-
-Der Parameter `relay-server-ip` ist die IP-Adresse (oder der DNS-Name) des Servers, auf dem diese Container laufen. Der **optionale** Parameter `port` muss verwendet werden, wenn Sie einen anderen Port als **21117** für `hbbr` verwenden.
-
-Sie können auch Docker Compose verwenden, wobei diese Konfiguration als Vorlage dient:
+Sie können Folgendes verwenden `docker-compose.yml` Datei zum Starten des Servers:
 
 ```yaml
 version: '3'
 
 networks:
-  rustdesk-net:
+  sctgdesk-net:
     external: false
 
 services:
   hbbs:
     container_name: hbbs
     ports:
+      - 21114:21114
       - 21115:21115
       - 21116:21116
       - 21116:21116/udp
       - 21118:21118
-    image: rustdesk/rustdesk-server:latest
-    command: hbbs -r rustdesk.example.com:21117
+    image: sctg/sctgdesk-server:latest
+    command: hbbs -r sctgdesk.example.com:21117
     volumes:
-      - ./data:/root
+      - ./data:/usr/local/share/sctgdesk
     networks:
-      - rustdesk-net
+      - sctgdesk-net
     depends_on:
       - hbbr
     restart: unless-stopped
@@ -99,247 +68,353 @@ services:
     ports:
       - 21117:21117
       - 21119:21119
-    image: rustdesk/rustdesk-server:latest
+    image: sctg/sctgdesk-server:latest
     command: hbbr
     volumes:
-      - ./data:/root
+      - ./data:/usr/local/share/sctgdesk
     networks:
-      - rustdesk-net
+      - sctgdesk-net
     restart: unless-stopped
 ```
 
-Bearbeiten Sie Zeile 16 so, dass sie auf Ihren Relay-Server verweist (den, der am Port 21117 lauscht). Sie können auch die Zeilen für die Volumes (Zeile 18 und 33) bearbeiten, wenn Sie dies wünschen.
-
-(Die Anerkennung für Docker Compose geht an @lukebarone und @QuiGonLeong.)
-
-## S6-Overlay-basierte Images
-
-Diese Images sind mit `busybox:stable` gebaut, mit dem Zusatz Binärdateien (sowohl hbbr als auch hbbs) und [S6-overlay](https://github.com/just-containers/s6-overlay). Sie sind auf [Docker hub](https://hub.docker.com/r/rustdesk/rustdesk-server-s6/) mit diesen Tags verfügbar:
-
-| Architektur | Version | Image:Tag |
-| --- | --- | --- |
-| multiarch | neueste | `rustdesk/rustdesk-server-s6:latest` |
-| amd64 | neueste | `rustdesk/rustdesk-server-s6:latest-amd64` |
-| i386 | neueste | `rustdesk/rustdesk-server-s6:latest-i386` |
-| arm64v8 | neueste | `rustdesk/rustdesk-server-s6:latest-arm64v8` |
-| armv7 | neueste | `rustdesk/rustdesk-server-s6:latest-armv7` |
-| multiarch | 2 | `rustdesk/rustdesk-server-s6:2` |
-| amd64 | 2 | `rustdesk/rustdesk-server-s6:2-amd64` |
-| i386 | 2 | `rustdesk/rustdesk-server-s6:2-i386` |
-| arm64v8 | 2 | `rustdesk/rustdesk-server-s6:2-arm64v8` |
-| armv7 | 2 | `rustdesk/rustdesk-server-s6:2-armv7` |
-| multiarch | 2.0.0 | `rustdesk/rustdesk-server-s6:2.0.0` |
-| amd64 | 2.0.0 | `rustdesk/rustdesk-server-s6:2.0.0-amd64` |
-| i386 | 2.0.0 | `rustdesk/rustdesk-server-s6:2.0.0-i386` |
-| arm64v8 | 2.0.0 | `rustdesk/rustdesk-server-s6:2.0.0-arm64v8` |
-| armv7 | 2.0.0 | `rustdesk/rustdesk-server-s6:2.0.0-armv7` |
-
-Es wird dringend empfohlen, das Image `multiarch` entweder mit dem Tag `major version` oder `latest` zu verwenden.
-
-Das S6-Overlay fungiert als Supervisor und hält beide Prozesse am Laufen, sodass bei diesem Image keine zwei separaten Container benötigt werden.
-
-Sie können diese Images direkt mit `docker run` mit diesem Befehl starten:
+und starten Sie den Server mit:
 
 ```bash
-docker run --name rustdesk-server \ 
-  --net=host \
-  -e "RELAY=rustdeskrelay.example.com" \
-  -e "ENCRYPTED_ONLY=1" \
-  -v "$PWD/data:/data" -d rustdesk/rustdesk-server-s6:latest
+mkdir -p data
+docker-compose up 
 ```
 
-oder ohne `--net=host`, aber die P2P-Direktverbindung kann dann nicht funktionieren.
+**Anmerkung**: *Beim ersten Start des Servers liegt ein Problem vor. Der Server startet nicht ordnungsgemäß. Sie müssen den Server stoppen und erneut starten. Dies ist ein bekanntes Problem und wir arbeiten daran. Das Problem hängt mit der Initialisierung der Datenbank und der Konfigurationsdateien zusammen. Während der Server gestartet wird, sind die Datenbank- und Konfigurationsdateien noch nicht initialisiert. Der Server startet beim nächsten Start korrekt.*
+
+### Standard-Admin-Benutzer
+
+Der Standard-Admin-Benutzer wird mit dem Benutzernamen `admin` und das Passwort `Hello,world!`. Sie können das Passwort nach der ersten Anmeldung an der Webkonsole ändern.
+
+## API-Standalone-Version
+
+Die eigenständige API-Version ist eine Version des Servers, die den API-Server und die Webkonsole enthält, aber nicht den Rendez-Vous-Server.\
+Die Standalone-Version ist in einem eigenen Repository verfügbar [sctgdesk-api-server](https://github.com/sctg-development/sctgdesk-api-server).\
+Informationen zu allen Problemen im Zusammenhang mit der API oder der Webkonsole finden Sie in der [sctgdesk-api-server](https://github.com/sctg-development/sctgdesk-api-server) Aufbewahrungsort.
+
+## Screenshots
+
+### Webkonsole
+
+<img width="1085" alt="login" src="https://github.com/sctg-development/sctgdesk-server/assets/165936401/fe72a374-8a98-4606-8632-3d919f9317c9">
+
+<img width="1285" alt="dashboard" src="https://github.com/sctg-development/sctgdesk-api-server/assets/165936401/0bb148d6-8723-491f-88c5-b98331d64f61">
+
+<img width="1085" alt="devices" src="https://github.com/sctg-development/sctgdesk-server/assets/165936401/6ae55861-f65c-4950-a068-f22eef3ad81a">
+
+<img width="1084" alt="users" src="https://github.com/sctg-development/sctgdesk-server/assets/165936401/8d225841-43f5-44f4-8d41-5b6ca3324096">
+
+<img width="1087" alt="groups" src="https://github.com/sctg-development/sctgdesk-server/assets/165936401/d84ce3d3-1d19-4765-883f-001f313a4a1e">
+
+<img width="1089" alt="address books" src="https://github.com/sctg-development/sctgdesk-server/assets/165936401/db13010b-077a-4e14-943b-9d8de3266f82">
+
+<img width="730" alt="rues" src="https://github.com/sctg-development/sctgdesk-api-server/assets/165936401/3a990deb-d8bb-4725-a47d-435ec3667fee">
+
+<img width="621" alt="add rules" src="https://github.com/sctg-development/sctgdesk-api-server/assets/165936401/355f3903-2b54-4b08-abd0-e33c84a260ed">
+
+### API-Dokumentation
+
+<img width="1502" alt="apidoc" src="https://github.com/sctg-development/sctgdesk-server/assets/165936401/88fe7910-fe62-43e5-a16c-70dc1201e040">
+
+### Verwendung im Rustdesk-Client
+
+<img width="913" alt="Capture d’écran 2024-05-24 à 12 14 34" src="https://github.com/sctg-development/sctgdesk-server/assets/165936401/1b253577-dce2-4163-9a49-ba4b3da37812">
+
+<img width="923" alt="Capture d’écran 2024-05-24 à 12 07 21" src="https://github.com/sctg-development/sctgdesk-server/assets/165936401/c49b3aba-b13f-4b15-a69c-d492a90e774a">
+
+<img width="927" alt="Capture d’écran 2024-05-24 à 12 07 32" src="https://github.com/sctg-development/sctgdesk-server/assets/165936401/f447f5fa-bc77-4bc6-858a-c6cadf9b7f6c">
+
+## Autoupdate-Links generieren
+
+Wir haben unseren Client so modifiziert, dass er die Autoupdate-Links vom API-Server und nicht von Github-Versionen abruft.\
+Damit die AutoUpdate-Links funktionieren, müssen Sie Ihren Client so ändern, dass er die AutoUpdate-Links vom API-Server abruft. Das [Wie Sie es tun können](https://github.com/sctg-development/sctgdesk/blob/481d3516fef1daa145d8044594187cb11959f8be/src/common.rs#L953L972):
+
+```rust
+// src/common.rs
+#[tokio::main(flavor = "current_thread")]
+async fn check_software_update_() -> hbb_common::ResultType<()> {
+    let url=format!("{}/api/software/releases/latest",get_api_server("".to_owned(), "".to_owned())).to_owned();
+    log::info!("URL for checking software updates: {}", url);
+    //let url = "https://github.com/rustdesk/rustdesk/releases/latest";
+    let latest_release_response = create_http_client_async().get(url).send().await?;
+    let latest_release_version = latest_release_response
+        .url()
+        .path()
+        .rsplit('/')
+        .next()
+        .unwrap_or_default();
+
+    let response_url = latest_release_response.url().to_string();
+
+    if get_version_number(&latest_release_version) > get_version_number(crate::VERSION) {
+        *SOFTWARE_UPDATE_URL.lock().unwrap() = response_url;
+    }
+    Ok(())
+}
+```
+
+# Sicherheit
+
+Der eingebettete API-Server ist weder gesichert noch gegen DDOS-Angriffe geschützt. Es empfiehlt sich, einen Reverseproxy vor dem API-Server zu verwenden. NGINX ist für diesen Zweck eine gute Wahl. HAProxy ist auch eine gute Wahl.\
+Wir verwenden HAProxy vor dem API-Server in unserer Produktionsumgebung.
+Dies ist unsere Konfigurationsdatei für HAProxy, sie wird nur als Beispiel bereitgestellt. Sie sollten es an Ihre eigenen Bedürfnisse anpassen.:
+
+```haproxy
+global
+    log /dev/log    local0
+    log /dev/log    local1 notice
+    chroot /var/lib/haproxy
+    stats socket /run/haproxy/admin.sock mode 660 level admin expose-fd listeners
+    stats timeout 30s
+    user haproxy
+    group haproxy
+    daemon
+
+defaults
+    log global
+    retries 2
+    timeout connect 3000ms
+    timeout server 5000ms
+    timeout client 5000ms
+
+frontend hbbs_wss
+    bind 0.0.0.0:21120 ssl crt /etc/haproxy/hbb.pem
+    default_backend hbbs_wss_backend
+
+frontend hbbs_api
+    mode http
+    option forwardfor
+    bind 0.0.0.0:21114 ssl crt /etc/haproxy/api.pem
+    http-request set-header X-Forwarded-Proto https
+    default_backend hbbs_api_backend
+
+frontend hbbs_api_443
+    mode http
+    option forwardfor
+    bind 0.0.0.0:443 ssl crt /etc/haproxy/api.pem
+    http-request set-header X-Forwarded-Proto https
+    filter compression
+    compression algo gzip
+    compression type text/css text/html text/javascript application/javascript text/plain text/xml application/json
+    compression offload
+    default_backend hbbs_api_backend
+
+frontend hbbr_wss
+    bind 0.0.0.0:21121 ssl crt /etc/haproxy/hbb.pem
+    default_backend hbbr_wss_backend
+
+backend hbbs_api_backend
+    mode http
+    server srv_main 127.0.0.1:21113
+
+backend hbbs_wss_backend
+    server srv_main 127.0.0.1:21118
+
+backend hbbr_wss_backend
+    server srv_main 127.0.0.1:21119
+```
+
+Der hbbs-Server wird mit
+
+```service
+[Unit]
+Description=Rustdesk Signal Server
+
+[Service]
+Type=simple
+LimitNOFILE=1000000
+ExecStart=/usr/bin/hbbs --api-port=21113 -k AucFCOYVWNHRkJnx13FFh7C0tmUZ3nei5wXKmlfK6WPYthz65fRavaA5HO/OIz2kq+bCSlAqBkZgvikwVGqw/Q== --mask=10.10.0.235/24 -r rendez-vous.example.org -R rendez-vous.example.org
+#Environment="RUST_LOG=debug"
+Environment="ALWAYS_USE_RELAY=Y"
+Environment="OAUTH2_CREATE_USER=1"
+Environment="S3CONFIG_FILE=s3config.toml"
+Environment="OAUTH2_CONFIG_FILE=oauth2.toml"
+WorkingDirectory=/var/lib/rustdesk-server/
+User=
+Group=
+Restart=always
+StandardOutput=append:/var/log/rustdesk-server/hbbs.log
+StandardError=append:/var/log/rustdesk-server/hbbs.error
+# Restart service after 10 seconds if node service crashes
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+# RustDesk Server-Programm
+
+[![build](https://github.com/sctg-development/sctgdesk-server/actions/workflows/multiarch-docker-hub.yml/badge.svg)](https://github.com/sctg-development/sctgdesk-server/actions/workflows/multiarch-docker-hub.yml)
+[![build](https://github.com/sctg-development/sctgdesk-server/actions/workflows/macos-intel-build.yml/badge.svg)](https://github.com/sctg-development/sctgdesk-server/actions/workflows/macos-intel-build.yml)
+[![build](https://github.com/sctg-development/sctgdesk-server/actions/workflows/windows.yml/badge.svg)](https://github.com/sctg-development/sctgdesk-server/actions/workflows/windows.yml)
+
+[**Herunterladen**](https://github.com/rustdesk/rustdesk-server/releases)
+
+[**Manuell**](https://rustdesk.com/docs/en/self-host/)
+
+[**Häufig gestellte Fragen**](https://github.com/rustdesk/rustdesk/wiki/FAQ)
+
+Hosten Sie Ihren eigenen RustDesk-Server selbst, er ist kostenlos und Open Source.
+
+## So erstellen Sie manuell
+
+Zuerst benötigen Sie eine funktionierende Rust-Entwicklungs-Toolchain und eine funktionierende Node ≥ 20-Installation.
+
+*   Unices (Linux, MacOS usw.):
 
 ```bash
-docker run --name rustdesk-server \
-  -p 21115:21115 -p 21116:21116 -p 21116:21116/udp \
-  -p 21117:21117 -p 21118:21118 -p 21119:21119 \
-  -e "RELAY=rustdeskrelay.example.com" \
-  -e "ENCRYPTED_ONLY=1" \
-  -v "$PWD/data:/data" -d rustdesk/rustdesk-server-s6:latest
+DATABASE_URL=sqlite://$(pwd)/db_v2.sqlite3 cargo build --release
 ```
 
-Oder Sie können eine Docker Compose-Datei verwenden:
+*   Fenster mit cmd.exe Schale:
+
+```cmd
+set "DATABASE_URL=sqlite://%CD%/db_v2.sqlite3" && cargo build --release
+```
+
+Drei ausführbare Dateien werden in target/release generiert.
+
+*   hbbs - RustDesk ID/Rendezvous-Server mit API-Server
+*   hbbr - RustDesk Relay Server
+*   rustdesk-utils - RustDesk CLI-Dienstprogramme
+
+Aktualisierte Binärdateien finden Sie auf der [Auslösungen](https://github.com/sctg-development/sctgdesk-server/releases) Seite.
+
+Wenn Sie zusätzliche Funktionen wünschen [RustDesk Server Pro](https://rustdesk.com/pricing.html) könnte besser zu Ihnen passen.
+
+Wenn Sie Ihren eigenen Server entwickeln möchten, [rustdesk-server-demo](https://github.com/rustdesk/rustdesk-server-demo) könnte ein besserer und einfacherer Start für Sie sein als dieses Repo.
+
+## Docker-Images
+
+Docker-Images werden automatisch generiert und in jedem GitHub-Release veröffentlicht.
+
+Diese Images werden gegen `ubuntu-22.04` Mit der einzigen Hinzufügung der Hauptbinärdateien (`hbbr` und `hbbs`). Sie sind erhältlich auf [Docker-Hub](https://hub.docker.com/r/sctg/sctgdesk-server/) mit diesen Tags:
+
+| Architektur | Bild:Tag |
+| --- | --- |
+| AMD64 | `sctg/sctgdesk-server:latest` |
+| arm64v8 | `sctg/sctgdesk-server:latest` |
+
+Sie können diese Bilder direkt mit `docker run` mit diesen Befehlen:
+
+```bash
+docker run --name hbbs --net=host -v "$PWD/data:/usr/local/share/sctgdesk" -d sctg/sctgdesk-server:latest hbbs -r <relay-server-ip[:port]> 
+docker run --name hbbr --net=host -v "$PWD/data:/usr/local/share/sctgdesk" -d sctg/sctgdesk-server:latest hbbr 
+```
+
+oder ohne `--net=host`, aber die P2P-Direktverbindung kann nicht funktionieren.
+
+Bei Systemen, die SELinux verwenden, `/root` bis `/root:z` ist erforderlich, damit die Container ordnungsgemäß ausgeführt werden können. Alternativ kann die SELinux-Containertrennung vollständig deaktiviert werden, indem die Option `--security-opt label=disable`.
+
+```bash
+docker run --name hbbs -p 21114:21114 -p 21115:21115 -p 21116:21116 -p 21116:21116/udp -p 21118:21118 -v "$PWD/data:/usr/local/share/sctgdesk" -d sctg/sctgdesk-server:latest hbbs -r <relay-server-ip[:port]> 
+docker run --name hbbr -p 21117:21117 -p 21119:21119 -v "$PWD/data:/usr/local/share/sctgdesk" -d sctg/sctgdesk-serverlatest hbbr 
+```
+
+Das `relay-server-ip` ist die IP-Adresse (oder der DNS-Name) des Servers, auf dem diese Container ausgeführt werden. Das **wahlfrei** `port` muss verwendet werden, wenn Sie einen anderen Port als **21117** für `hbbr`.
+
+Sie können auch docker-compose verwenden, indem Sie diese Konfiguration als Vorlage verwenden:
 
 ```yaml
 version: '3'
 
+networks:
+  sctgdesk-net:
+    external: false
+
 services:
-  rustdesk-server:
-    container_name: rustdesk-server
+  hbbs:
+    container_name: hbbs
     ports:
+      - 21114:21114
+      - 21115:21115
       - 21115:21115
       - 21116:21116
       - 21116:21116/udp
-      - 21117:21117
       - 21118:21118
-      - 21119:21119
-    image: rustdesk/rustdesk-server-s6:latest
-    environment:
-      - "RELAY=rustdesk.example.com:21117"
-      - "ENCRYPTED_ONLY=1"
+    image: sctg/sctgdesk-server:latest
+    command: hbbs -r sctgdesk.example.com:21117
     volumes:
-      - ./data:/data
+      - ./data:/usr/local/share/sctgdesk
+    networks:
+      - sctgdesk-net
+    depends_on:
+      - hbbr
     restart: unless-stopped
-```
 
-Für dieses Container-Image können Sie diese Umgebungsvariablen verwenden, **zusätzlich** zu den im Abschnitt **Umgebungsvariablen** angegebenen Variablen:
-
-| Variable | optional | Beschreibung |
-| --- | --- | --- |
-| RELAY | nein | IP-Adresse/DNS-Name des Rechners, auf dem dieser Container läuft |
-| ENCRYPTED_ONLY | ja | Wenn auf **1** gesetzt, wird eine unverschlüsselte Verbindung nicht akzeptiert |
-| KEY_PUB | ja | Öffentlicher Teil des Schlüsselpaares |
-| KEY_PRIV | ja | Privater Teil des Schlüsselpaares |
-
-### Verwaltung von Geheimnissen in S6-Overlay-basierten Images
-
-Sie können das Schlüsselpaar natürlich in einem Docker-Volume aufbewahren, aber empfehlenswert ist, die Schlüssel nicht in das Dateisystem zu schreiben.
-
-Beim Start des Containers wird das Vorhandensein des Schlüsselpaares geprüft (`/data/id_ed25519.pub` und `/data/id_ed25519`). Wenn einer dieser Schlüssel nicht existiert, wird er aus den Umgebungsvariablen oder den Docker-Geheimnissen neu erstellt.
-Dann wird die Gültigkeit des Schlüsselpaares überprüft: Wenn öffentlicher und privater Schlüssel nicht übereinstimmen, wird der Container angehalten.
-Wenn Sie keine Schlüssel angeben, erzeugt `hbbs` einen für Sie und legt ihn am Standardspeicherort ab.
-
-#### Umgebungsvariablen zum Speichern des Schlüsselpaars verwenden
-
-Sie können Docker-Umgebungsvariablen verwenden, um die Schlüssel zu speichern. Folgen Sie einfach diesen Beispielen:
-
-```bash
-docker run --name rustdesk-server \ 
-  --net=host \
-  -e "RELAY=rustdeskrelay.example.com" \
-  -e "ENCRYPTED_ONLY=1" \
-  -e "DB_URL=/db/db_v2.sqlite3" \
-  -e "KEY_PRIV=FR2j78IxfwJNR+HjLluQ2Nh7eEryEeIZCwiQDPVe+PaITKyShphHAsPLn7So0OqRs92nGvSRdFJnE2MSyrKTIQ==" \
-  -e "KEY_PUB=iEyskoaYRwLDy5+0qNDqkbPdpxr0kXRSZxNjEsqykyE=" \
-  -v "$PWD/db:/db" -d rustdesk/rustdesk-server-s6:latest
-```
-
-```yaml
-version: '3'
-
-services:
-  rustdesk-server:
-    container_name: rustdesk-server
+  hbbr:
+    container_name: hbbr
     ports:
-      - 21115:21115
-      - 21116:21116
-      - 21116:21116/udp
       - 21117:21117
-      - 21118:21118
       - 21119:21119
-    image: rustdesk/rustdesk-server-s6:latest
-    environment:
-      - "RELAY=rustdesk.example.com:21117"
-      - "ENCRYPTED_ONLY=1"
-      - "DB_URL=/db/db_v2.sqlite3"
-      - "KEY_PRIV=FR2j78IxfwJNR+HjLluQ2Nh7eEryEeIZCwiQDPVe+PaITKyShphHAsPLn7So0OqRs92nGvSRdFJnE2MSyrKTIQ=="
-      - "KEY_PUB=iEyskoaYRwLDy5+0qNDqkbPdpxr0kXRSZxNjEsqykyE="
+    image: sctg/sctgdesk-server-server:latest
+    command: hbbr
     volumes:
-      - ./db:/db
+      - ./data:/usr/local/share/sctgdesk
+    networks:
+      - sctgdesk-net
     restart: unless-stopped
 ```
 
-#### Docker-Geheimnisse zum Speichern des Schlüsselpaars verwenden
+Bearbeiten Sie Zeile 16 so, dass sie auf Ihren Relay-Server verweist (derjenige, der auf Port 21117 lauscht). Sie können bei Bedarf auch die Lautstärkezeilen (Zeile 18 und Zeile 33) bearbeiten.
 
-Sie können alternativ auch Docker-Geheimnisse verwenden, um die Schlüssel zu speichern.
-Dies ist nützlich, wenn Sie **Docker Compose** oder **Docker Swarm** verwenden.
-Folgen Sie einfach diesem Beispiel:
+(docker-compose-Credits gehen an @lukebarone und @QuiGonLeong)
 
-```bash
-cat secrets/id_ed25519.pub | docker secret create key_pub -
-cat secrets/id_ed25519 | docker secret create key_priv -
-docker service create --name rustdesk-server \
-  --secret key_priv --secret key_pub \
-  --net=host \
-  -e "RELAY=rustdeskrelay.example.com" \
-  -e "ENCRYPTED_ONLY=1" \
-  -e "DB_URL=/db/db_v2.sqlite3" \
-  --mount "type=bind,source=$PWD/db,destination=/db" \
-  rustdesk/rustdesk-server-s6:latest
-```
+> Beachten Sie, dass hier sctg/sctgdesk-server-server:latest in China durch die neueste Versionsnummer auf dockerhub ersetzt werden kann, z. B. sctg/sctgdesk-server-server:1.1.99-37. Andernfalls kann die alte Version aufgrund der Bildbeschleunigung abgerufen werden.
 
-```yaml
-version: '3'
+## So erstellen Sie ein Schlüsselpaar
 
-services:
-  rustdesk-server:
-    container_name: rustdesk-server
-    ports:
-      - 21115:21115
-      - 21116:21116
-      - 21116:21116/udp
-      - 21117:21117
-      - 21118:21118
-      - 21119:21119
-    image: rustdesk/rustdesk-server-s6:latest
-    environment:
-      - "RELAY=rustdesk.example.com:21117"
-      - "ENCRYPTED_ONLY=1"
-      - "DB_URL=/db/db_v2.sqlite3"
-    volumes:
-      - ./db:/db
-    restart: unless-stopped
-    secrets:
-      - key_pub
-      - key_priv
+Für die Verschlüsselung wird ein Schlüsselpaar benötigt; Sie können es bereitstellen, wie bereits erläutert, aber Sie benötigen eine Möglichkeit, eine zu erstellen.
 
-secrets:
-  key_pub:
-    file: secrets/id_ed25519.pub
-  key_priv:
-    file: secrets/id_ed25519      
-```
-
-## Ein Schlüsselpaar erstellen
-
-Für die Verschlüsselung wird ein Schlüsselpaar benötigt, das Sie bereitstellen können, aber Sie benötigen eine Möglichkeit, es zu erstellen.
-
-Mit diesem Befehl können Sie ein Schlüsselpaar erzeugen:
+Mit diesem Befehl können Sie ein Schlüsselpaar generieren:
 
 ```bash
 /usr/bin/rustdesk-utils genkeypair
 ```
 
-Wenn Sie das Paket `rustdesk-utils` nicht auf Ihrem System installiert haben (oder dies nicht wollen), können Sie den gleichen Befehl mit Docker aufrufen:
+Wenn Sie die Berechtigung nicht haben (oder nicht wollen) `rustdesk-utils` Paket auf Ihrem System installiert ist, können Sie denselben Befehl mit Docker aufrufen:
 
 ```bash
-docker run --rm --entrypoint /usr/bin/rustdesk-utils  rustdesk/rustdesk-server-s6:latest genkeypair
+docker run --rm --entrypoint /usr/bin/rustdesk-utils  sctg/sctgdesk-server-server:latest genkeypair
 ```
 
-Die Ausgabe sieht dann etwa so aus:
+Die Ausgabe sieht in etwa so aus:
 
 ```text
 Public Key:  8BLLhtzUBU/XKAH4mep3p+IX4DSApe7qbAwNH9nv4yA=
 Secret Key:  egAVd44u33ZEUIDTtksGcHeVeAwywarEdHmf99KM5ajwEsuG3NQFT9coAfiZ6nen4hfgNICl7upsDA0f2e/jIA==
 ```
 
-## Debian-Pakete
+## Pakete
 
-Für jede Binärdatei stehen separate Debian-Pakete zur Verfügung, die Sie in [Releases](https://github.com/rustdesk/rustdesk-server/releases) finden können.
+Für jede Binärdatei sind separate .deb Pakete verfügbar, die Sie in der [Auslösungen](https://github.com/sctg-development/sctgdesk-server/releases).
 Diese Pakete sind für die folgenden Distributionen gedacht:
 
-- Ubuntu 22.04 LTS
-- Ubuntu 20.04 LTS
-- Ubuntu 18.04 LTS
-- Debian 11 Bullseye
-- Debian 10 Buster
+*   Ubuntu 22.04 LTS
+*   MacOS Intel oder Apple Silicon
+*   Windows x86\_64 oder i686
 
-## Umgebungsvariablen
+## ENV-Variablen
 
-hbbs und hbbr können mit diesen Umgebungsvariablen konfiguriert werden.
-Sie können die Variablen wie üblich angeben oder eine `.env`-Datei verwenden.
+hbbs und hbbr können mit diesen ENV-Variablen konfiguriert werden.
+Sie können die Variablen wie gewohnt angeben oder eine `.env` Datei.
 
-| Variable | Binärdatei | Beschreibung |
+| variabel | Binär | Beschreibung |
 | --- | --- | --- |
-| ALWAYS_USE_RELAY | hbbs | Wenn auf **Y** gesetzt, wird eine direkte Verbindung nicht zugelassen. |
-| DB_URL | hbbs | Pfad für die Datenbankdatei |
-| DOWNGRADE_START_CHECK | hbbr | Verzögerung (in Sekunden) vor der Downgrade-Prüfung |
-| DOWNGRADE_THRESHOLD | hbbr | Schwellenwert der Downgrade-Prüfung (Bit/ms)) |
-| KEY | hbbs/hbbr | Wenn gesetzt, wird die Verwendung eines bestimmten Schlüssels erzwungen. Wenn auf **_** gesetzt, wird die Verwendung eines beliebigen Schlüssels erzwungen. |
-| LIMIT_SPEED | hbbr | Höchstgeschwindigkeit (in Mb/s) |
-| PORT | hbbs/hbbr | Lauschender Port (21116 für hbbs - 21117 für hbbr) |
-| RELAY_SERVERS | hbbs | IP-Adresse/DNS-Name der Rechner, auf denen hbbr läuft (durch Komma getrennt) |
-| RUST_LOG | all | Debug-Level einstellen (error\|warn\|info\|debug\|trace) |
-| SINGLE_BANDWIDTH | hbbr | Maximale Bandbreite für eine einzelne Verbindung (in Mb/s) |
-| TOTAL_BANDWIDTH | hbbr | Maximale Gesamtbandbreite (in Mb/s) |
+| ALWAYS_USE_RELAY | HBBS | Wenn auf **"Y"** Direkte Peer-Verbindung verbietet |
+| DOWNGRADE_START_CHECK | HBBR | Verzögerung (in Sekunden) vor der Downgrade-Prüfung |
+| DOWNGRADE_THRESHOLD | HBBR | Schwellenwert der Downgrade-Prüfung (Bit/ms) |
+| SCHLÜSSEL | HBBS/HBBR | Wenn gesetzt, erzwingt die Verwendung eines bestimmten Schlüssels, wenn auf **"\_"** Erzwingen Sie die Verwendung einer beliebigen Taste |
+| LIMIT_SPEED | HBBR | Geschwindigkeitsbegrenzung (in Mb/s) |
+| OAUTH2\_CONFIG_FILE | HBBS | Pfad für OAuth2-Konfigurationsdatei |
+| OAUTH2\_CREATE_USER | HBBS | Wenn auf **"1"** Erstellen eines Benutzers, wenn er nicht vorhanden ist |
+| HAFEN | HBBS/HBBR | Abhöranschluss (21116 für HBBS - 21117 für HBBR) |
+| RELAIS | HBBS | IP-Adresse/DNS-Name der Maschinen, auf denen hbbr läuft (durch Komma getrennt) |
+| RUST_LOG | alle | Debug-Level setzen (error|warn|info|debug|trace) |
+| S3CONFIG_FILE | HBBS | Pfad für S3-Konfigurationsdatei |
+| SINGLE_BANDWIDTH | HBBR | Maximale Bandbreite für eine einzelne Verbindung (in Mb/s) |
+| TOTAL_BANDWIDTH | HBBR | Maximale Gesamtbandbreite (in Mb/s) |
