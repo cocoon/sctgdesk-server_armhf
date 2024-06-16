@@ -250,7 +250,9 @@ WantedBy=multi-user.target
 
 # RustDesk Server Program
 
-[![build](https://github.com/rustdesk/rustdesk-server/actions/workflows/build.yaml/badge.svg)](https://github.com/rustdesk/rustdesk-server/actions/workflows/build.yaml)
+[![build](https://github.com/sctg-development/sctgdesk-server/actions/workflows/multiarch-docker-hub.yml/badge.svg)](https://github.com/sctg-development/sctgdesk-server/actions/workflows/multiarch-docker-hub.yml)
+[![build](https://github.com/sctg-development/sctgdesk-server/actions/workflows/macos-intel-build.yml/badge.svg)](https://github.com/sctg-development/sctgdesk-server/actions/workflows/macos-intel-build.yml)
+[![build](https://github.com/sctg-development/sctgdesk-server/actions/workflows/windows.yml/badge.svg)](https://github.com/sctg-development/sctgdesk-server/actions/workflows/windows.yml)
 
 [**Download**](https://github.com/rustdesk/rustdesk-server/releases)
 
@@ -408,7 +410,6 @@ You can specify the variables as usual or use an `.env` file.
 | variable | binary | description |
 | --- | --- | --- |
 | ALWAYS_USE_RELAY | hbbs | if set to **"Y"** disallows direct peer connection |
-| DATABASE_URL | hbbs | url for database file |
 | DOWNGRADE_START_CHECK | hbbr | delay (in seconds) before downgrade check |
 | DOWNGRADE_THRESHOLD | hbbr | threshold of downgrade check (bit/ms) |
 | KEY | hbbs/hbbr | if set force the use of a specific key, if set to **"_"** force the use of any key |
