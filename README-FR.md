@@ -84,8 +84,6 @@ mkdir -p data
 docker-compose up 
 ```
 
-**Note**: *Il y a un problème avec le premier démarrage du serveur. Le serveur ne démarre pas correctement. Vous devez arrêter le serveur et le redémarrer. Il s’agit d’un problème connu et nous y travaillons. Le problème est lié à l’initialisation de la base de données et des fichiers de configuration. Pendant le démarrage du serveur, la base de données et les fichiers de configuration ne sont pas encore initialisés. Le serveur démarrera correctement lors des prochains démarrages.*
-
 ### Utilisateur admin par défaut
 
 L’utilisateur admin par défaut est créé avec le nom d’utilisateur `admin` et le mot de passe `Hello,world!`. Vous pouvez modifier le mot de passe après la première connexion sur la webconsole.

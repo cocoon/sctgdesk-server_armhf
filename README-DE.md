@@ -84,8 +84,6 @@ mkdir -p data
 docker-compose up 
 ```
 
-**Anmerkung**: *Es gibt ein Problem beim ersten Start des Servers. Der Server wird nicht ordnungsgemäß gestartet. Sie müssen den Server stoppen und erneut starten. Dies ist ein bekanntes Problem und wir arbeiten daran. Das Problem hängt mit der Initialisierung der Datenbank und der Konfigurationsdateien zusammen. Während der Server gestartet wird, sind die Datenbank- und Konfigurationsdateien noch nicht initialisiert. Der Server wird bei den nächsten Starts korrekt gestartet.*
-
 ### Standardmäßiger Admin-Benutzer
 
 Der Standard-Admin-Benutzer wird mit dem Benutzernamen `admin` und das Passwort `Hello,world!`. Sie können das Passwort nach der ersten Anmeldung in der Webkonsole ändern.

@@ -84,8 +84,6 @@ mkdir -p data
 docker-compose up 
 ```
 
-**Notitie**: *Er is een probleem met de eerste start van de server. De server zal niet correct opstarten. U moet de server stoppen en opnieuw starten. Dit is een bekend probleem en we werken eraan. Het probleem heeft te maken met de initialisatie van de database en configuratiebestanden. Terwijl de server wordt opgestart, zijn de database- en configuratiebestanden nog niet geïnitialiseerd. De server zal correct opstarten bij de volgende starts.*
-
 ### Standaard beheerdersgebruiker
 
 De standaard admin-gebruiker wordt gemaakt met de gebruikersnaam `admin` en het wachtwoord `Hello,world!`. U kunt het wachtwoord wijzigen na de eerste keer inloggen op de webconsole.
