@@ -7,6 +7,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
+    permissions:
+      id-token: write
+      contents: read
+      attestations: write
 
     steps:
     - name: Checkout code
@@ -50,6 +54,14 @@ jobs:
       run: |
         cargo update -p sctgdesk-api-server
         DATABASE_URL=sqlite://$(pwd)/db_v2.sqlite3 cargo build --release
+
+    - name: Attest release
+      uses: actions/attest-build-provenance@v1
+      with:
+        subject-path: |
+          '${{ github.workspace }}/target/release/hbbs'
+          '${{ github.workspace }}/target/release/hbbr'
+          '${{ github.workspace }}/target/release/rustdesk-utils'
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
