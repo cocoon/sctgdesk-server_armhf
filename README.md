@@ -254,7 +254,7 @@ WantedBy=multi-user.target
 [![build](https://github.com/sctg-development/sctgdesk-server/actions/workflows/macos-intel-build.yml/badge.svg)](https://github.com/sctg-development/sctgdesk-server/actions/workflows/macos-intel-build.yml)
 [![build](https://github.com/sctg-development/sctgdesk-server/actions/workflows/windows.yml/badge.svg)](https://github.com/sctg-development/sctgdesk-server/actions/workflows/windows.yml)
 
-[**Download**](https://github.com/rustdesk/rustdesk-server/releases)
+[**Download**](https://github.com/sctgdesk/sctgdesk-server/releases)
 
 [**Manual**](https://rustdesk.com/docs/en/self-host/)
 
@@ -284,7 +284,9 @@ Three executables will be generated in target/release.
 * hbbr - RustDesk relay server
 * rustdesk-utils - RustDesk CLI utilities
 
-You can find updated binaries on the [releases](https://github.com/sctg-development/sctgdesk-server/releases) page.
+You can find updated binaries on the [releases](https://github.com/sctg-development/sctgdesk-server/releases) page.  
+
+All released binaries after release v1.1.99-40 are attestated with Github Actions. You can check the attestation by checking the sha256sum of the binary with `https://search.sigstore.dev/?hash=<sha256>` for example.
 
 If you want extra features [RustDesk Server Pro](https://rustdesk.com/pricing.html) might suit you better.
 

@@ -146,3 +146,15 @@ jobs:
           subject-name: docker.io/${{ secrets.DOCKER_IMAGE }}
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
+
+      - name: Attest release amd64
+        uses: actions/attest-build-provenance@v1
+        continue-on-error: true
+        with:
+          subject-path: '/tmp/amd64/linux-ubuntu-22.04_${{ github.event.release.tag_name }}_amd64.zip, /tmp/amd64/rustdesk-server-hbbr_${{ github.event.release.tag_name }}_amd64.deb, /tmp/amd64/rustdesk-server-hbbs_${{ github.event.release.tag_name }}_amd64.deb, /tmp/amd64/rustdesk-server-utils_${{ github.event.release.tag_name }}_amd64.deb, /tmp/amd64/zip/hbbs, /tmp/amd64/zip/hbbr, /tmp/amd64/zip/rustdesk-utils'
+
+      - name: Attest release arm64
+        uses: actions/attest-build-provenance@v1
+        continue-on-error: true
+        with:
+          subject-path: '/tmp/arm64/linux-ubuntu-22.04_${{ github.event.release.tag_name }}_arm64.zip, /tmp/arm64/rustdesk-server-hbbr_${{ github.event.release.tag_name }}_arm64.deb, /tmp/arm64/rustdesk-server-hbbs_${{ github.event.release.tag_name }}_arm64.deb, /tmp/arm64/rustdesk-server-utils_${{ github.event.release.tag_name }}_arm64.deb, /tmp/arm64/zip/hbbs, /tmp/arm64/zip/hbbr, /tmp/arm64/zip/rustdesk-utils'
