@@ -75,10 +75,7 @@ jobs:
     - name: Attest release
       uses: actions/attest-build-provenance@v1
       with:
-        subject-path: |
-          'target/release/hbbs'
-          'target/release/hbbr'
-          'target/release/rustdesk-utils'
+        subject-path: 'target/release/hbbs, target/release/hbbr, target/release/rustdesk-utils'
 
     - name: Upload Release Assets binaries for Macos amd64
       uses: softprops/action-gh-release@v2

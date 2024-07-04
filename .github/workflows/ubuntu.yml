@@ -14,7 +14,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Set up environment
       run: |
@@ -58,10 +58,7 @@ jobs:
     - name: Attest release
       uses: actions/attest-build-provenance@v1
       with:
-        subject-path: |
-          'target/release/hbbs'
-          'target/release/hbbr'
-          'target/release/rustdesk-utils'
+        subject-path: 'target/release/hbbs, target/release/hbbr, target/release/rustdesk-utils'
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4

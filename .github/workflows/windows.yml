@@ -21,7 +21,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Install SQLite
       run: |
@@ -84,10 +84,7 @@ jobs:
     - name: Attest release
       uses: actions/attest-build-provenance@v1
       with:
-        subject-path: |
-          'target/${{ matrix.job.arch }}-pc-windows-msvc/release/hbbs.exe'
-          'target/${{ matrix.job.arch }}-pc-windows-msvc/release/hbbs.exe'
-          'target/${{ matrix.job.arch }}-pc-windows-msvc/release/rustdesk-utils.exe'
+        subject-path: 'target/${{ matrix.job.arch }}-pc-windows-msvc/release/hbbs.exe, target/${{ matrix.job.arch }}-pc-windows-msvc/release/hbbs.exe, target/${{ matrix.job.arch }}-pc-windows-msvc/release/rustdesk-utils.exe'
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
