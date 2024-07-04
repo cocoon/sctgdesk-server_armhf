@@ -85,10 +85,10 @@ jobs:
       uses: actions/attest-build-provenance@v1
       with:
         subject-path: |
-          '${{ github.workspace }}/target/${{ matrix.job.arch }}-pc-windows-msvc/release/hbbs.exe'
-          '${{ github.workspace }}/target/${{ matrix.job.arch }}-pc-windows-msvc/release/hbbs.exe'
-          '${{ github.workspace }}/target/${{ matrix.job.arch }}-pc-windows-msvc/release/rustdesk-utils.exe'
-          
+          'target/${{ matrix.job.arch }}-pc-windows-msvc/release/hbbs.exe'
+          'target/${{ matrix.job.arch }}-pc-windows-msvc/release/hbbs.exe'
+          'target/${{ matrix.job.arch }}-pc-windows-msvc/release/rustdesk-utils.exe'
+
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
