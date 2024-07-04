@@ -22,6 +22,11 @@ on:
         required: true
 jobs:
   push_to_registry:
+    permissions:
+      id-token: write
+      contents: write
+      packages: write
+      attestations: write
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     steps:
