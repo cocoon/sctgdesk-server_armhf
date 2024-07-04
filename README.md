@@ -85,8 +85,6 @@ mkdir -p data
 docker-compose up 
 ```
 
-**Note**: *There is an issue with the first start of the server. The server will not start correctly. You need to stop the server and start it again. This is a known issue and we are working on it. The issue is related to the database and config files initialization. While the server is starting, the database and config files are not yet initialized. The server will start correctly on the next starts.*
-
 ### Default admin user
 
 The default admin user is created with the username `admin` and the password `Hello,world!`. You can change the password after the first login on the webconsole.
