@@ -23,19 +23,19 @@ Il s’agit d’une version modifiée de RustDesk Server, qui est gratuite et op
 *   La deuxième différence est que cette version inclut une implémentation préliminaire du serveur API Rustdesk Server Pro.
     *   Prise en charge du carnet d’adresses personnel
     *   Prise en charge du carnet d’adresses partagé au niveau du groupe
-        *   lecture seule, lecture-écriture, admin
+        *   Lecture seule, lecture-écriture, admin
     *   Prise en charge du carnet d’adresses partagé au niveau de l’utilisateur
-        *   lecture seule, lecture-écriture, admin
+        *   Lecture seule, lecture-écriture, admin
 *   La troisième différence est que cette version inclut une implémentation préliminaire d’une console web simple.
 
-La webconsole est accessible à l’adresse `http://<server-ip>:21114/` avec login « admin » et mot de passe « Hello,world ! » .\
-Vous pouvez parcourir la documentation de l’API dans le serveur d’API intégré à l’adresse suivante : `http://<server-ip>:21114/api/doc/`.
+La webconsole est accessible à l’adresse `http://<server-ip>:21114/` avec l’identifiant « admin » et le mot de passe « Hello,world ! » .\
+Vous pouvez consulter la documentation de l’API dans le serveur API intégré à l’adresse suivante : `http://<server-ip>:21114/api/doc/`.
 
-Une documentation non interactive sur l’API est disponible à l’adresse suivante : [sctgdesk-api-server repo](https://sctg-development.github.io/sctgdesk-api-server/).
+Une documentation API non interactive est disponible à l’adresse [sctgdesk-api-server repo](https://sctg-development.github.io/sctgdesk-api-server/).
 
 ## TL; DR
 
-Vous pouvez utiliser les éléments suivants `docker-compose.yml` pour démarrer le serveur :
+Vous pouvez utiliser les éléments suivants `docker-compose.yml` fichier pour démarrer le serveur :
 
 ```yaml
 version: '3'
@@ -84,17 +84,17 @@ mkdir -p data
 docker-compose up 
 ```
 
-**Note**: *Il y a un problème avec le premier démarrage du serveur. Le serveur ne démarre pas correctement. Vous devez arrêter le serveur et le redémarrer. C’est un problème connu et nous y travaillons. Le problème est lié à l’initialisation de la base de données et des fichiers de configuration. Pendant le démarrage du serveur, la base de données et les fichiers de configuration ne sont pas encore initialisés. Le serveur démarrera correctement lors des prochains démarrages.*
+**Note**: *Il y a un problème avec le premier démarrage du serveur. Le serveur ne démarre pas correctement. Vous devez arrêter le serveur et le redémarrer. Il s’agit d’un problème connu et nous y travaillons. Le problème est lié à l’initialisation de la base de données et des fichiers de configuration. Pendant le démarrage du serveur, la base de données et les fichiers de configuration ne sont pas encore initialisés. Le serveur démarrera correctement lors des prochains démarrages.*
 
-### Utilisateur administrateur par défaut
+### Utilisateur admin par défaut
 
 L’utilisateur admin par défaut est créé avec le nom d’utilisateur `admin` et le mot de passe `Hello,world!`. Vous pouvez modifier le mot de passe après la première connexion sur la webconsole.
 
-## Version autonome de l’API
+## API Version autonome
 
-La version autonome de l’API est une version du serveur qui inclut le serveur API et la console web, mais pas le serveur de rendez-vous.\
+La version autonome de l’API est une version du serveur qui inclut le serveur API et la webconsole mais pas le serveur de rendez-vous.\
 La version autonome est disponible dans son propre dépôt [sctgdesk-api-server](https://github.com/sctg-development/sctgdesk-api-server).\
-Pour tout problème lié à l’api ou à la webconsole, veuillez vous référer à la section [sctgdesk-api-server](https://github.com/sctg-development/sctgdesk-api-server) dépôt.
+Pour tous les problèmes liés à l’api ou à la webconsole, veuillez vous référer à la [sctgdesk-api-server](https://github.com/sctg-development/sctgdesk-api-server) dépôt.
 
 ## Captures d’écran
 
@@ -130,7 +130,7 @@ Pour tout problème lié à l’api ou à la webconsole, veuillez vous référer
 
 ## Génération de liens de mise à jour automatique
 
-Nous avons modifié notre client pour récupérer les liens de mise à jour automatique du serveur d’api plutôt que des versions de Github.\
+Nous avons modifié notre client pour récupérer les liens de mise à jour automatique depuis le serveur api plutôt que depuis les versions de Github.\
 Pour que les liens de mise à jour automatique fonctionnent, vous devez modifier votre client pour récupérer les liens de mise à jour automatique à partir du serveur d’API. Ceci [Comment vous pouvez le faire](https://github.com/sctg-development/sctgdesk/blob/481d3516fef1daa145d8044594187cb11959f8be/src/common.rs#L953L972):
 
 ```rust
@@ -159,7 +159,7 @@ async fn check_software_update_() -> hbb_common::ResultType<()> {
 
 # Sécurité
 
-Le serveur API intégré n’est ni sécurisé ni protégé contre les attaques DDOS. Une bonne pratique consiste à utiliser un proxy inverse devant le serveur d’API. NGINX est un bon choix à cet effet. HAProxy est également un bon choix.\
+Le serveur API intégré n’est ni sécurisé ni protégé contre les attaques DDOS. Une bonne pratique consiste à utiliser un proxy inverse devant le serveur API. NGINX est un bon choix à cet effet. HAProxy est également un bon choix.\
 Nous utilisons HAProxy devant le serveur API dans notre environnement de production.
 Ceci est notre fichier de configuration pour HAProxy, il est fourni à titre d’exemple uniquement. Vous devez l’adapter à vos propres besoins.
 
@@ -246,13 +246,13 @@ RestartSec=10
 WantedBy=multi-user.target
 ```
 
-# Programme serveur RustDesk
+# Programme de serveur RustDesk
 
 [![build](https://github.com/sctg-development/sctgdesk-server/actions/workflows/multiarch-docker-hub.yml/badge.svg)](https://github.com/sctg-development/sctgdesk-server/actions/workflows/multiarch-docker-hub.yml)
 [![build](https://github.com/sctg-development/sctgdesk-server/actions/workflows/macos-intel-build.yml/badge.svg)](https://github.com/sctg-development/sctgdesk-server/actions/workflows/macos-intel-build.yml)
 [![build](https://github.com/sctg-development/sctgdesk-server/actions/workflows/windows.yml/badge.svg)](https://github.com/sctg-development/sctgdesk-server/actions/workflows/windows.yml)
 
-[**Télécharger**](https://github.com/rustdesk/rustdesk-server/releases)
+[**Télécharger**](https://github.com/sctgdesk/sctgdesk-server/releases)
 
 [**Manuelle**](https://rustdesk.com/docs/en/self-host/)
 
@@ -262,7 +262,7 @@ Auto-hébergez votre propre serveur RustDesk, il est gratuit et open source.
 
 ## Comment construire manuellement
 
-Tout d’abord, vous devez disposer d’une chaîne d’outils de développement Rust fonctionnelle et d’une installation fonctionnelle Node ≥ 20.
+Tout d’abord, vous devez disposer d’une chaîne d’outils de développement Rust fonctionnelle et d’une installation fonctionnelle de Node ≥ 20.
 
 *   Unices (Linux, MacOS, etc.) :
 
@@ -282,22 +282,24 @@ Trois exécutables seront générés dans target/release.
 *   hbbr - Serveur relais RustDesk
 *   rustdesk-utils - Utilitaires CLI RustDesk
 
-Vous pouvez trouver les binaires mis à jour sur le site [Versions](https://github.com/sctg-development/sctgdesk-server/releases) page.
+Vous pouvez trouver les fichiers binaires mis à jour sur le [Versions](https://github.com/sctg-development/sctgdesk-server/releases) page.
+
+Tous les binaires publiés après la version v1.1.99-40 sont attribués avec des actions Github. Vous pouvez vérifier l’attestation en vérifiant la somme sha256 du binaire avec `https://search.sigstore.dev/?hash=<sha256>` par exemple.
 
 Si vous voulez des fonctionnalités supplémentaires [Serveur RustDesk Pro](https://rustdesk.com/pricing.html) pourrait mieux vous convenir.
 
-Si vous souhaitez développer votre propre serveur, [Démo du serveur rustdesk](https://github.com/rustdesk/rustdesk-server-demo) pourrait être un meilleur et plus simple début pour vous que ce dépôt.
+Si vous souhaitez développer votre propre serveur, [rustdesk-server-demo](https://github.com/rustdesk/rustdesk-server-demo) pourrait être un meilleur début et plus simple pour vous que ce dépôt.
 
 ## Images Docker
 
-Les images Docker sont automatiquement générées et publiées sur chaque version de GitHub.
+Les images Docker sont générées et publiées automatiquement sur chaque version de github.
 
 Ces images sont construites contre `ubuntu-22.04` avec le seul ajout des binaires principaux (`hbbr` et `hbbs`). Ils sont disponibles sur [Hub Docker](https://hub.docker.com/r/sctg/sctgdesk-server/) avec ces balises :
 
 | L’architecture | image :balise |
 | --- | --- |
 | AMD64 | `sctg/sctgdesk-server:latest` |
-| Arm64v8 | `sctg/sctgdesk-server:latest` |
+| ARM64v8 | `sctg/sctgdesk-server:latest` |
 
 Vous pouvez commencer ces images directement avec `docker run` avec ces commandes :
 
@@ -308,7 +310,7 @@ docker run --name hbbr --net=host -v "$PWD/data:/usr/local/share/sctgdesk" -d sc
 
 ou sans `--net=host`, mais la connexion directe P2P ne peut pas fonctionner.
 
-Pour les systèmes utilisant SELinux, le remplacement de `/root` par `/root:z` est nécessaire pour que les conteneurs fonctionnent correctement. Alternativement, la séparation des conteneurs SELinux peut être complètement désactivée en ajoutant l’option `--security-opt label=disable`.
+Pour les systèmes utilisant SELinux, le remplacement de `/root` par `/root:z` est nécessaire au bon fonctionnement des conteneurs. Alternativement, la séparation des conteneurs SELinux peut être complètement désactivée en ajoutant l’option `--security-opt label=disable`.
 
 ```bash
 docker run --name hbbs -p 21114:21114 -p 21115:21115 -p 21116:21116 -p 21116:21116/udp -p 21118:21118 -v "$PWD/data:/usr/local/share/sctgdesk" -d sctg/sctgdesk-server:latest hbbs -r <relay-server-ip[:port]> 
@@ -360,9 +362,9 @@ services:
     restart: unless-stopped
 ```
 
-Modifiez la ligne 16 pour pointer vers votre serveur relais (celui qui écoute sur le port 21117). Vous pouvez également modifier les lignes de volume (ligne 18 et ligne 33) si vous le souhaitez.
+Éditez la ligne 16 pour pointer vers votre serveur relais (celui qui écoute sur le port 21117). Vous pouvez également modifier les lignes de volume (ligne 18 et ligne 33) si vous le souhaitez.
 
-(Le crédit docker-compose revient à @lukebarone et @QuiGonLeong)
+(crédit docker-compose revient à @lukebarone et @QuiGonLeong)
 
 > Notez qu’ici, sctg/sctgdesk-server-server :latest en Chine peut être remplacé par le dernier numéro de version sur dockerhub, tel que sctg/sctgdesk-server-server :1.1.99-37. Sinon, l’ancienne version peut être retirée en raison de l’accélération de l’image.
 
@@ -376,7 +378,7 @@ Vous pouvez utiliser cette commande pour générer une paire de clés :
 /usr/bin/rustdesk-utils genkeypair
 ```
 
-Si vous n’avez pas (ou ne voulez pas) le `rustdesk-utils` installé sur votre système, vous pouvez appeler la même commande avec docker :
+Si vous n’avez pas (ou ne voulez pas) le `rustdesk-utils` installé sur votre système, vous pouvez invoquer la même commande avec docker :
 
 ```bash
 docker run --rm --entrypoint /usr/bin/rustdesk-utils  sctg/sctgdesk-server-server:latest genkeypair
@@ -391,7 +393,7 @@ Secret Key:  egAVd44u33ZEUIDTtksGcHeVeAwywarEdHmf99KM5ajwEsuG3NQFT9coAfiZ6nen4hf
 
 ## Paquets
 
-Des paquets .deb séparés sont disponibles pour chaque binaire, vous pouvez les trouver dans le [Versions](https://github.com/sctg-development/sctgdesk-server/releases).
+Des paquets .deb distincts sont disponibles pour chaque binaire, vous pouvez les trouver dans le [Versions](https://github.com/sctg-development/sctgdesk-server/releases).
 Ces paquets sont destinés aux distributions suivantes :
 
 *   Ubuntu 22.04 LTS
@@ -405,16 +407,16 @@ Vous pouvez spécifier les variables comme d’habitude ou utiliser un `.env` li
 
 | variable | binaire | Descriptif |
 | --- | --- | --- |
-| ALWAYS_USE_RELAY | hbbs | si défini sur **« Y »** Interdit la connexion directe entre pairs |
-| DOWNGRADE_START_CHECK | HBBR | délai (en secondes) avant la vérification de la rétrogradation |
-| DOWNGRADE_THRESHOLD | HBBR | Seuil de vérification de la mise à niveau vers une version antérieure (bit/ms) |
-| CLÉ | hbbs/hbbr | si elle est définie, force l’utilisation d’une touche spécifique, si elle est définie sur **"\_"** forcer l’utilisation de n’importe quelle clé |
-| LIMIT_SPEED | HBBR | Limite de vitesse (en Mb/s) |
-| OAUTH2\_CONFIG_FILE | hbbs | Chemin d’accès au fichier de configuration OAuth2 |
-| OAUTH2\_CREATE_USER | hbbs | si défini sur **"1"** Créer un utilisateur s’il n’existe pas |
+| ALWAYS_USE_RELAY | HBB | si défini sur **« Y »** Interdit la connexion directe entre pairs |
+| DOWNGRADE_START_CHECK | HBBR | Délai (en secondes) avant la vérification de la rétrogradation |
+| DOWNGRADE_THRESHOLD | HBBR | Seuil de vérification de la rétrogradation (bit/ms) |
+| CLÉ | hbbs/hbbr | si cette option est définie, force l’utilisation d’une touche spécifique, si elle est définie sur **"\_"** Forcer l’utilisation de n’importe quelle clé |
+| LIMIT_SPEED | HBBR | Vitesse maximale (en Mb/s) |
+| OAUTH2\_CONFIG_FILE | HBB | Chemin d’accès au fichier de configuration OAuth2 |
+| OAUTH2\_CREATE_USER | HBB | si défini sur **"1"** Créer un utilisateur s’il n’existe pas |
 | LE PORT | hbbs/hbbr | Port d’écoute (21116 pour HBBS - 21117 pour HBBR) |
-| RELAIS | hbbs | Adresse IP/nom DNS des machines exécutant hbbr (séparées par une virgule) |
-| RUST_LOG | tout | définir le niveau de débogage (error|warn|info|debug|trace) |
-| S3CONFIG_FILE | hbbs | Chemin d’accès au fichier de configuration S3 |
-| SINGLE_BANDWIDTH | HBBR | bande passante maximale pour une seule connexion (en Mbit/s) |
+| RELAIS | HBB | Adresse IP/nom DNS des machines exécutant hbbr (séparées par une virgule) |
+| RUST_LOG | Tous | définir le niveau de débogage (error|warn|info|debug|trace) |
+| S3CONFIG_FILE | HBB | Chemin d’accès au fichier de configuration S3 |
+| SINGLE_BANDWIDTH | HBBR | bande passante maximale pour une seule connexion (en Mb/s) |
 | TOTAL_BANDWIDTH | HBBR | bande passante totale maximale (en Mb/s) |
