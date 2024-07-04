@@ -22,7 +22,7 @@ jobs:
         sudo apt-get install -y curl build-essential debhelper devscripts pkg-config libssl-dev libsqlite3-dev zip
 
     - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
+      uses: crusty-pie/toolchain@main
       with:
           profile: minimal
           toolchain: stable

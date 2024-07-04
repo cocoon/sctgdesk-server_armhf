@@ -24,7 +24,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
+      uses: crusty-pie/toolchain@main
       with:
         profile: minimal
         toolchain: stable
