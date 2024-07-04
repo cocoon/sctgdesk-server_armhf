@@ -10,7 +10,7 @@ jobs:
     runs-on: ${{ matrix.job.sys }}
     permissions:
       id-token: write
-      contents: read
+      contents: write
       packages: write
       attestations: write
     strategy:
