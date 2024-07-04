@@ -2789,7 +2789,7 @@ dependencies = [
 [[package]]
 name = "oauth2"
 version = "0.1.0"
-source = "git+https://github.com/sctg-development/sctgdesk-api-server.git?branch=main#ad40dd59028721aaa6bc8e80d181b3ab777e24b2"
+source = "git+https://github.com/sctg-development/sctgdesk-api-server.git?branch=main#fbd25bb2b5bfb5b70f9dbe68d2d0293640281687"
 dependencies = [
  "base64 0.22.1",
  "log",
@@ -3735,7 +3735,7 @@ checksum = "e86697c916019a8588c99b5fac3cead74ec0b4b819707a682fd4d23fa0ce1ba1"
 [[package]]
 name = "s3software"
 version = "0.1.0"
-source = "git+https://github.com/sctg-development/sctgdesk-api-server.git?branch=main#ad40dd59028721aaa6bc8e80d181b3ab777e24b2"
+source = "git+https://github.com/sctg-development/sctgdesk-api-server.git?branch=main#fbd25bb2b5bfb5b70f9dbe68d2d0293640281687"
 dependencies = [
  "aws-config",
  "aws-sdk-s3",
@@ -3814,7 +3814,7 @@ dependencies = [
 [[package]]
 name = "sctgdesk-api-server"
 version = "0.1.0"
-source = "git+https://github.com/sctg-development/sctgdesk-api-server.git?branch=main#ad40dd59028721aaa6bc8e80d181b3ab777e24b2"
+source = "git+https://github.com/sctg-development/sctgdesk-api-server.git?branch=main#fbd25bb2b5bfb5b70f9dbe68d2d0293640281687"
 dependencies = [
  "base64 0.22.1",
  "bcrypt",
@@ -4218,7 +4218,7 @@ dependencies = [
 [[package]]
 name = "state"
 version = "0.1.0"
-source = "git+https://github.com/sctg-development/sctgdesk-api-server.git?branch=main#ad40dd59028721aaa6bc8e80d181b3ab777e24b2"
+source = "git+https://github.com/sctg-development/sctgdesk-api-server.git?branch=main#fbd25bb2b5bfb5b70f9dbe68d2d0293640281687"
 dependencies = [
  "base64 0.22.1",
  "bcrypt",
@@ -4964,7 +4964,7 @@ checksum = "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821"
 [[package]]
 name = "utils"
 version = "0.1.0"
-source = "git+https://github.com/sctg-development/sctgdesk-api-server.git?branch=main#ad40dd59028721aaa6bc8e80d181b3ab777e24b2"
+source = "git+https://github.com/sctg-development/sctgdesk-api-server.git?branch=main#fbd25bb2b5bfb5b70f9dbe68d2d0293640281687"
 dependencies = [
  "base64 0.22.1",
  "chrono",

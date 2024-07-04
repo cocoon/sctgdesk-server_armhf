@@ -88,6 +88,13 @@ fn main() -> ResultType<()> {
     let serial: i32 = get_arg("serial").parse().unwrap_or(0);
     
     std::env::set_var("MAIN_PKG_VERSION", env!("CARGO_PKG_VERSION"));
+    let handle = thread::spawn(|| {
+        let rt = rocket::tokio::runtime::Runtime::new().unwrap();
+        rt.block_on(async {
+            let _ = sctgdesk_api_server::ApiState::new_with_db("db_v2.sqlite3").await;
+        });
+    });
+    handle.join().unwrap();
     let rocket_thread = thread::spawn(|| {
         let _ = start_rocket();
     });
