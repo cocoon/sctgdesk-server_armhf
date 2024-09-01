@@ -8,6 +8,13 @@
 # You can also reference a tag or a branch, but the action can change without warning.
 
 name: Generate multi-arch Docker image and release linux binaries
+
+permissions:
+  id-token: write
+  contents: write
+  attestations: write
+  packages: write
+
 on:
   # push:
   #   branches:
@@ -100,29 +107,19 @@ jobs:
           cd /tmp/arm64/zip
           zip -r /tmp/arm64/linux-ubuntu-22.04_${{ github.event.release.tag_name }}_arm64.zip .
 
-      - name: Upload Release Assets binaries for Ubuntu 22.04 arm64
-        uses: softprops/action-gh-release@v2
-        continue-on-error: true
-        with:
-          files: |
-            /tmp/arm64/linux-ubuntu-22.04_${{ github.event.release.tag_name }}_arm64.zip
-            /tmp/arm64/rustdesk-server-hbbr_${{ github.event.release.tag_name }}_arm64.deb
-            /tmp/arm64/rustdesk-server-hbbs_${{ github.event.release.tag_name }}_arm64.deb
-            /tmp/arm64/rustdesk-server-utils_${{ github.event.release.tag_name }}_arm64.deb
+      - name: Upload Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload Release Assets binaries for Ubuntu 22.04 amd64
-        uses: softprops/action-gh-release@v2
-        continue-on-error: true
-        with:
-          files: |
-            /tmp/amd64/linux-ubuntu-22.04_${{ github.event.release.tag_name }}_amd64.zip
-            /tmp/amd64/rustdesk-server-hbbr_${{ github.event.release.tag_name }}_amd64.deb
-            /tmp/amd64/rustdesk-server-hbbs_${{ github.event.release.tag_name }}_amd64.deb
-            /tmp/amd64/rustdesk-server-utils_${{ github.event.release.tag_name }}_amd64.deb
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+            ls -lR
+            gh release upload ${{ github.event.release.tag_name }} /tmp/arm64/linux-ubuntu-22.04_${{ github.event.release.tag_name }}_arm64.zip
+            gh release upload ${{ github.event.release.tag_name }} /tmp/arm64/rustdesk-server-hbbr_${{ github.event.release.tag_name }}_arm64.deb
+            gh release upload ${{ github.event.release.tag_name }} /tmp/arm64/rustdesk-server-hbbs_${{ github.event.release.tag_name }}_arm64.deb
+            gh release upload ${{ github.event.release.tag_name }} /tmp/arm64/rustdesk-server-utils_${{ github.event.release.tag_name }}_arm64.deb
+            gh release upload ${{ github.event.release.tag_name }} /tmp/amd64/linux-ubuntu-22.04_${{ github.event.release.tag_name }}_amd64.zip
+            gh release upload ${{ github.event.release.tag_name }} /tmp/amd64/rustdesk-server-hbbr_${{ github.event.release.tag_name }}_amd64.deb
+            gh release upload ${{ github.event.release.tag_name }} /tmp/amd64/rustdesk-server-hbbs_${{ github.event.release.tag_name }}_amd64.deb
+            gh release upload ${{ github.event.release.tag_name }} /tmp/amd64/rustdesk-server-utils_${{ github.event.release.tag_name }}_amd64.deb
 
       - name: Extract metadata (tags, labels) for Docker integration image
         id: meta
