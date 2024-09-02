@@ -55,6 +55,22 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       
+      - name: Add current version in Debian changelog if not present
+        run: |
+          export TAG=${{ github.event.release.tag_name }}
+          if ! grep -q "rustdesk-server ($TAG)" debian/changelog; then
+            TMP=$(mktemp)
+            echo "rustdesk-server ($TAG) unstable; urgency=medium" > $TMP
+            echo "" >> $TMP
+            echo "  * New release $TAG" >> $TMP
+            echo "" >> $TMP
+            echo " -- GitHub Actions <ronan@none.com>  $(date -R)" >> $TMP
+            echo "" >> $TMP
+            cat debian/changelog >> $TMP
+            cp $TMP debian/changelog
+            rm $TMP
+          fi
+          
       - name: Extract metadata (tags, labels) for Docker integration image
         id: metaintegration
         uses: docker/metadata-action@v5
