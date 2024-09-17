@@ -1,4 +1,4 @@
-use hbb_common::{log, ResultType};
+use hbb_common::{log, toml::de, ResultType};
 use sqlx::{
     sqlite::SqliteConnectOptions, ConnectOptions, Connection, Error as SqlxError, SqliteConnection,
 };
@@ -50,11 +50,12 @@ impl Database {
         if !std::path::Path::new(url).exists() {
             std::fs::File::create(url).ok();
         }
+        let deadpool_default_size = num_cpus::get()*4; // cf: https://docs.rs/deadpool/0.12.1/deadpool/managed/struct.PoolConfig.html#structfield.max_size
         let n: usize = std::env::var("MAX_DATABASE_CONNECTIONS")
-            .unwrap_or_else(|_| "1".to_owned())
+            .unwrap_or_else(|_| deadpool_default_size.to_string().to_owned())
             .parse()
             .unwrap_or(1);
-        log::debug!("MAX_DATABASE_CONNECTIONS={}", n);
+        log::info!("MAX_DATABASE_CONNECTIONS={}", n);
 
         let pool = Pool::builder(DbPool {
             url: url.to_owned(),

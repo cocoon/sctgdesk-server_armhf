@@ -1910,6 +1910,7 @@ dependencies = [
  "mac_address",
  "machine-uid 0.2.0",
  "minreq",
+ "num_cpus",
  "once_cell",
  "ping",
  "regex",

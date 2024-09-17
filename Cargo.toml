@@ -59,6 +59,7 @@ ping = "0.5"
 sctgdesk-api-server = { git = "https://github.com/sctg-development/sctgdesk-api-server.git", branch = "main" }
 
 rocket = { version = "0.5", features = ["json", "secrets"] }
+num_cpus = "1.16"
 
 [build-dependencies]
 hbb_common = { path = "libs/hbb_common" }
