@@ -4,7 +4,7 @@
   <a href="#how-to-create-a-keypair">Keypair</a> •
   <a href="#packages">Binaries</a> •
   <a href="#env-variables">Variables</a><br>
-  [<a href="README-FR.md">French</a>] | [<a href="README-DE.md">Deutsch</a>] | [<a href="README-NL.md">Nederlands</a>] | [<a href="README-TW.md">繁體中文</a>] | [<a href="README-ZH.md">简体中文</a>]<br>
+  [<a href="README-FR.md">French</a>] | [<a href="README-DE.md">Deutsch</a>] | [<a href="README-NL.md">Nederlands</a>] | [<a href="README-TW.md">繁體中文</a>] | [<a href="README-ZH.md">简体中文</a>] | [<a href="README-RU.md">Русский</a>]<br>
 </p>
 
 # SctgDesk Server-Programm
@@ -19,7 +19,7 @@
 
 Dies ist eine modifizierte Version von RustDesk Server, die kostenlos und Open Source ist.
 
-*   Der erste Unterschied besteht darin, dass diese Version die neue *tcp* -Modus, der in der RustDesk Server Pro-Version enthalten ist.
+*   Der erste Unterschied besteht darin, dass diese Version die neue Version *tcp* -Modus, der in der RustDesk Server Pro-Version enthalten ist.
 *   Der zweite Unterschied besteht darin, dass diese Version eine vorläufige Implementierung des Rustdesk Server Pro API-Servers enthält.
     *   Unterstützung für das persönliche Adressbuch
     *   Unterstützung für freigegebenes Adressbuch auf Gruppenebene
@@ -31,11 +31,11 @@ Dies ist eine modifizierte Version von RustDesk Server, die kostenlos und Open S
 Die Webkonsole ist unter der Adresse `http://<server-ip>:21114/` mit Login "admin" und Passwort "Hello,world!" .\
 Sie können die API-Dokumentation auf dem builtins API-Server unter der Adresse `http://<server-ip>:21114/api/doc/`.
 
-Eine nicht-interaktive API-Dokumentation finden Sie unter [sctgdesk-api-server Repository](https://sctg-development.github.io/sctgdesk-api-server/).
+Eine nicht-interaktive API-Dokumentation finden Sie unter [sctgdesk-api-server repo](https://sctg-development.github.io/sctgdesk-api-server/).
 
 ## TL; DR
 
-Sie können Folgendes verwenden: `docker-compose.yml` Datei zum Starten des Servers:
+Sie können Folgendes verwenden `docker-compose.yml` Datei zum Starten des Servers:
 
 ```yaml
 version: '3'
@@ -91,8 +91,8 @@ Der Standard-Admin-Benutzer wird mit dem Benutzernamen `admin` und das Passwort 
 ## Eigenständige API-Version
 
 Die eigenständige API-Version ist eine Version des Servers, die den API-Server und die Webkonsole, aber nicht den Rendez-Vous-Server enthält.\
-Die Standalone-Version ist in einem eigenen Repository verfügbar [sctgdesk-api-server](https://github.com/sctg-development/sctgdesk-api-server).\
-Für alle Probleme im Zusammenhang mit der API oder Webkonsole lesen Sie bitte die [sctgdesk-api-server](https://github.com/sctg-development/sctgdesk-api-server) Aufbewahrungsort.
+Die Standalone-Version steht in einem eigenen Repository zur Verfügung [sctgdesk-api-server](https://github.com/sctg-development/sctgdesk-api-server).\
+Informationen zu allen Problemen im Zusammenhang mit der API oder der Webkonsole finden Sie in der [sctgdesk-api-server](https://github.com/sctg-development/sctgdesk-api-server) Aufbewahrungsort.
 
 ## Screenshots
 
@@ -129,7 +129,7 @@ Für alle Probleme im Zusammenhang mit der API oder Webkonsole lesen Sie bitte d
 ## Generieren von Autoupdate-Links
 
 Wir haben unseren Client so modifiziert, dass er die Autoupdate-Links vom API-Server und nicht von Github-Versionen abruft.\
-Damit die AutoUpdate-Links funktionieren, müssen Sie Ihren Client so ändern, dass er die Autoupdate-Links vom API-Server abruft. Das [Wie Sie es machen können](https://github.com/sctg-development/sctgdesk/blob/481d3516fef1daa145d8044594187cb11959f8be/src/common.rs#L953L972):
+Damit die Autoupdate-Links funktionieren, müssen Sie Ihren Client so ändern, dass die Autoupdate-Links vom API-Server abgerufen werden. Das [Wie Sie es tun können](https://github.com/sctg-development/sctgdesk/blob/481d3516fef1daa145d8044594187cb11959f8be/src/common.rs#L953L972):
 
 ```rust
 // src/common.rs
@@ -159,7 +159,7 @@ async fn check_software_update_() -> hbb_common::ResultType<()> {
 
 Der eingebettete API-Server ist weder gesichert noch gegen DDOS-Angriffe geschützt. Es empfiehlt sich, einen Reverseproxy vor dem API-Server zu verwenden. NGINX ist für diesen Zweck eine gute Wahl. HAProxy ist auch eine gute Wahl.\
 Wir verwenden HAProxy vor dem API-Server in unserer Produktionsumgebung.
-Dies ist unsere Konfigurationsdatei für HAProxy, sie wird nur als Beispiel bereitgestellt. Sie sollten es an Ihre eigenen Bedürfnisse anpassen.:
+Dies ist unsere Konfigurationsdatei für HAProxy, sie wird nur als Beispiel zur Verfügung gestellt. Sie sollten es an Ihre eigenen Bedürfnisse anpassen.:
 
 ```haproxy
 global
@@ -216,7 +216,7 @@ backend hbbr_wss_backend
     server srv_main 127.0.0.1:21119
 ```
 
-Der hbbs-Server wird gestartet mit
+Der hbbs-Server wird mit
 
 ```service
 [Unit]
@@ -282,7 +282,7 @@ Drei ausführbare Dateien werden in target/release generiert.
 
 Aktualisierte Binärdateien finden Sie auf der Seite [Auslösungen](https://github.com/sctg-development/sctgdesk-server/releases) Seite.
 
-Alle nach der Version v1.1.99-40 veröffentlichten Binärdateien werden mit Github Actions bestätigt. Sie können den Nachweis überprüfen, indem Sie die sha256sum der Binärdatei mit `https://search.sigstore.dev/?hash=<sha256>` Zum Beispiel.
+Alle nach der Veröffentlichung von v1.1.99-40 veröffentlichten Binärdateien werden mit Github Actions bestätigt. Sie können den Nachweis überprüfen, indem Sie die sha256sum der Binärdatei mit `https://search.sigstore.dev/?hash=<sha256>` Zum Beispiel.
 
 Wenn Sie zusätzliche Funktionen wünschen [RustDesk Server Pro](https://rustdesk.com/pricing.html) könnte besser zu Ihnen passen.
 
@@ -290,7 +290,7 @@ Wenn Sie einen eigenen Server entwickeln möchten, [rustdesk-server-demo](https:
 
 ## Docker-Bilder
 
-Docker-Images werden automatisch generiert und in jeder GitHub-Version veröffentlicht.
+Docker-Images werden automatisch generiert und in jedem GitHub-Release veröffentlicht.
 
 Diese Images werden erstellt für: `ubuntu-22.04` Mit der einzigen Hinzufügung der Hauptbinärdateien (`hbbr` und `hbbs`). Sie sind erhältlich auf [Docker-Hub](https://hub.docker.com/r/sctg/sctgdesk-server/) mit diesen Tags:
 
@@ -308,7 +308,7 @@ docker run --name hbbr --net=host -v "$PWD/data:/usr/local/share/sctgdesk" -d sc
 
 oder ohne `--net=host`, aber die P2P-Direktverbindung kann nicht funktionieren.
 
-Bei Systemen, die SELinux verwenden, `/root` bis `/root:z` ist erforderlich, damit die Container ordnungsgemäß ausgeführt werden. Alternativ kann die SELinux-Containertrennung vollständig deaktiviert werden, indem die Option `--security-opt label=disable`.
+Bei Systemen, die SELinux verwenden, `/root` bis `/root:z` ist erforderlich, damit die Container ordnungsgemäß ausgeführt werden können. Alternativ kann die SELinux-Containertrennung vollständig deaktiviert werden, indem die Option `--security-opt label=disable`.
 
 ```bash
 docker run --name hbbs -p 21114:21114 -p 21115:21115 -p 21116:21116 -p 21116:21116/udp -p 21118:21118 -v "$PWD/data:/usr/local/share/sctgdesk" -d sctg/sctgdesk-server:latest hbbs -r <relay-server-ip[:port]> 
@@ -364,7 +364,7 @@ Bearbeiten Sie Zeile 16 so, dass sie auf Ihren Relay-Server verweist (der auf Po
 
 (docker-compose-Guthaben geht an @lukebarone und @QuiGonLeong)
 
-> Beachten Sie, dass hier sctg/sctgdesk-server-server:latest in China durch die neueste Versionsnummer auf dockerhub ersetzt werden kann, z. B. sctg/sctgdesk-server-server:1.1.99-37. Andernfalls kann es vorkommen, dass die alte Version aufgrund der Bildbeschleunigung abgerufen wird.
+> Beachten Sie, dass hier sctg/sctgdesk-server-server:latest in China durch die neueste Versionsnummer auf dockerhub ersetzt werden kann, z. B. sctg/sctgdesk-server-server:1.1.99-37. Andernfalls kann es sein, dass die alte Version aufgrund der Bildbeschleunigung gezogen wird.
 
 ## So erstellen Sie ein Schlüsselpaar
 
@@ -376,7 +376,7 @@ Mit diesem Befehl können Sie ein Schlüsselpaar generieren:
 /usr/bin/rustdesk-utils genkeypair
 ```
 
-Wenn Sie die nicht haben (oder nicht möchten) `rustdesk-utils` Paket, das auf Ihrem System installiert ist, können Sie denselben Befehl mit docker aufrufen:
+Wenn Sie die `rustdesk-utils` Paket, das auf Ihrem System installiert ist, können Sie denselben Befehl mit docker aufrufen:
 
 ```bash
 docker run --rm --entrypoint /usr/bin/rustdesk-utils  sctg/sctgdesk-server-server:latest genkeypair
@@ -403,18 +403,18 @@ Diese Pakete sind für die folgenden Distributionen gedacht:
 hbbs und hbbr können mit diesen ENV-Variablen konfiguriert werden.
 Sie können die Variablen wie gewohnt angeben oder eine `.env` Datei.
 
-| Variable | Binär | Beschreibung |
+| variabel | Binär | Beschreibung |
 | --- | --- | --- |
-| ALWAYS_USE_RELAY | HBBS | Wenn auf **"Y"** Erlaubt keine direkte Peer-Verbindung |
+| ALWAYS_USE_RELAY | HBBS | Wenn auf **"Y"** Direkte Peer-Verbindung nicht zulässig |
 | DOWNGRADE_START_CHECK | HBBR | Verzögerung (in Sekunden) vor der Downgrade-Prüfung |
 | DOWNGRADE_THRESHOLD | HBBR | Schwellenwert für die Downgrade-Prüfung (Bit/ms) |
-| SCHLÜSSEL | HBBS/HBBR | Wenn gesetzt, erzwingt die Verwendung eines bestimmten Schlüssels, wenn auf **"\_"** Erzwingen Sie die Verwendung eines beliebigen Schlüssels |
+| SCHLÜSSEL | HBBS/HBBR | Wenn gesetzt, erzwingt die Verwendung eines bestimmten Schlüssels, wenn auf **"\_"** Erzwingen Sie die Verwendung einer beliebigen Taste |
 | LIMIT_SPEED | HBBR | Geschwindigkeitsbegrenzung (in Mb/s) |
 | OAUTH2\_CONFIG_FILE | HBBS | Pfad für OAuth2-Konfigurationsdatei |
 | OAUTH2\_CREATE_USER | HBBS | Wenn auf **"1"** Erstellen eines Benutzers, wenn er nicht vorhanden ist |
 | HAFEN | HBBS/HBBR | Abhöranschluss (21116 für HBBS - 21117 für HBBR) |
-| RELAIS | HBBS | IP-Adresse/DNS-Name der Maschinen, auf denen hbbr ausgeführt wird (durch Komma getrennt) |
+| RELAIS | HBBS | IP-Adresse/DNS-Name der Rechner, auf denen hbbr läuft (durch Komma getrennt) |
 | RUST_LOG | alle | Debug-Level setzen (Fehler|Warn|Info|Debug|Trace) |
-| S3CONFIG_FILE | HBBS | Pfad für die S3-Konfigurationsdatei |
+| S3CONFIG_FILE | HBBS | Pfad für S3-Konfigurationsdatei |
 | SINGLE_BANDWIDTH | HBBR | Maximale Bandbreite für eine einzelne Verbindung (in Mbit/s) |
-| TOTAL_BANDWIDTH | HBBR | max. Gesamtbandbreite (in Mb/s) |
+| TOTAL_BANDWIDTH | HBBR | Maximale Gesamtbandbreite (in Mbit/s) |

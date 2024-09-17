@@ -4,7 +4,7 @@
   <a href="#how-to-create-a-keypair">Keypair</a> •
   <a href="#packages">Binaries</a> •
   <a href="#env-variables">Variables</a><br>
-  [<a href="README-FR.md">French</a>] | [<a href="README-DE.md">Deutsch</a>] | [<a href="README-NL.md">Nederlands</a>] | [<a href="README-TW.md">繁體中文</a>] | [<a href="README-ZH.md">简体中文</a>]<br>
+  [<a href="README-FR.md">French</a>] | [<a href="README-DE.md">Deutsch</a>] | [<a href="README-NL.md">Nederlands</a>] | [<a href="README-TW.md">繁體中文</a>] | [<a href="README-ZH.md">简体中文</a>] | [<a href="README-RU.md">Русский</a>]<br>
 </p>
 
 # SctgDesk 伺服器程式
@@ -19,23 +19,23 @@
 
 這是 RustDesk Server 的修改版本，它是免費和開源的。
 
-*   第一個區別是這個版本包含新的*技術合作計劃*模式包含在 RustDesk Server Pro 版本中。
-*   第二個區別是，這個版本包括了 Rustdesk Server Pro API 伺服器的初步實現。
+*   第一個區別是這個版本包括新的*TCP 協定*模式包含在 RustDesk Server Pro 版本中。
+*   第二個區別是此版本包括 Rustdesk Server Pro API 伺服器的初步實現。
     *   支援個人通訊錄
-    *   支援組級別的共享通訊簿
+    *   支援組級別的共享通訊錄
         *   唯讀、讀寫、管理員
-    *   支援用戶級別的共享通訊簿
+    *   支援用戶級別的共享通訊錄
         *   唯讀、讀寫、管理員
-*   第三個區別是，此版本包含了簡單 Web 控制台的初步實現。
+*   第三個區別是，此版本包括簡單 Web 控制台的初步實現。
 
-Web控制台可在以下位址訪問`http://<server-ip>:21114/`登錄名「admin」，密碼「Hello，world！\
-您可以在位址所在的內置 API 伺服器中瀏覽 API 文件`http://<server-ip>:21114/api/doc/`.
+Web 控制台可通過以下位址訪問`http://<server-ip>:21114/`登錄名 “admin” 和密碼 “Hello，world！” 。\
+您可以在 builtins API 伺服器中的位址`http://<server-ip>:21114/api/doc/`.
 
-非互動式 API 文件可在以下位置獲得[sctgdesk-api-server 倉庫](https://sctg-development.github.io/sctgdesk-api-server/).
+非互動式 API 文件可在[sctgdesk-api-server 存儲庫](https://sctg-development.github.io/sctgdesk-api-server/).
 
 ## TL;博士
 
-您可以使用以下命令`docker-compose.yml`啟動伺服器的檔案：
+您可以使用以下內容`docker-compose.yml`檔案啟動伺服器：
 
 ```yaml
 version: '3'
@@ -86,17 +86,17 @@ docker-compose up
 
 ### 預設管理員使用者
 
-預設管理員使用者是使用使用者名創建的`admin`和密碼`Hello,world!`.您可以在 Web 控制臺上首次登錄後更改密碼。
+預設 admin 使用者是使用使用者名創建的`admin`和密碼`Hello,world!`.您可以在 Web 控制臺上首次登錄後更改密碼。
 
-## API 單機版
+## API 獨立版本
 
-api 獨立版本是包含 API 伺服器和 webconsole 的伺服器版本，但不包括 rendez-vous 伺服器。\
-獨立版本在其自己的存儲庫中可用[sctgdesk-api-伺服器](https://github.com/sctg-development/sctgdesk-api-server).\
-對於所有與 api 或 webconsole 相關的問題，請參閱[sctgdesk-api-伺服器](https://github.com/sctg-development/sctgdesk-api-server)存儲庫。
+api 獨立版本是包括 API 伺服器和 Web 控制台，但不包括 rendez-vous 伺服器的伺服器版本。\
+獨立版本在其自己的存儲庫中提供[sctgdesk-api 伺服器](https://github.com/sctg-development/sctgdesk-api-server).\
+所有 api 或 webconsole 相關問題，請參考[sctgdesk-api 伺服器](https://github.com/sctg-development/sctgdesk-api-server)存儲庫。
 
-## 截圖
+## 屏幕截圖
 
-### Web控制台
+### Web 控制台
 
 <img width="1085" alt="login" src="https://github.com/sctg-development/sctgdesk-server/assets/165936401/fe72a374-8a98-4606-8632-3d919f9317c9">
 
@@ -114,7 +114,7 @@ api 獨立版本是包含 API 伺服器和 webconsole 的伺服器版本，但�
 
 <img width="621" alt="add rules" src="https://github.com/sctg-development/sctgdesk-api-server/assets/165936401/355f3903-2b54-4b08-abd0-e33c84a260ed">
 
-### Api 文件
+### API 文件
 
 <img width="1502" alt="apidoc" src="https://github.com/sctg-development/sctgdesk-server/assets/165936401/88fe7910-fe62-43e5-a16c-70dc1201e040">
 
@@ -128,8 +128,8 @@ api 獨立版本是包含 API 伺服器和 webconsole 的伺服器版本，但�
 
 ## 生成自動更新連結
 
-我們修改了用戶端，以從 api 伺服器而不是 Github 版本中檢索自動更新連結。\
-為了使自動更新連結正常工作，您需要修改用戶端以從 api 伺服器檢索自動更新連結。這[你怎麼能做到](https://github.com/sctg-development/sctgdesk/blob/481d3516fef1daa145d8044594187cb11959f8be/src/common.rs#L953L972):
+我們修改了用戶端，從 api 伺服器而不是 Github 版本檢索自動更新連結。\
+要使自動更新連結正常工作，您需要修改用戶端以從 api 伺服器檢索自動更新連結。這[你怎麼做](https://github.com/sctg-development/sctgdesk/blob/481d3516fef1daa145d8044594187cb11959f8be/src/common.rs#L953L972):
 
 ```rust
 // src/common.rs
@@ -157,7 +157,7 @@ async fn check_software_update_() -> hbb_common::ResultType<()> {
 
 # 安全
 
-嵌入式 API 伺服器不受保護，也無法抵禦 DDOS 攻擊。一個好的做法是在 API 伺服器之前使用反向代理。NGINX 是實現此目的的不錯選擇。HAProxy也是一個不錯的選擇。\
+嵌入式 API 伺服器不受保護，也不受 DDOS 攻擊保護。一個好的做法是在 API 伺服器前面使用反向代理。NGINX 是實現此目的的不錯選擇。HAProxy 也是一個不錯的選擇。\
 我們在生產環境中的 API 伺服器前面使用 HAProxy。
 這是我們的HAProxy配置檔，僅作為示例提供。您應該根據自己的需要進行調整。
 
@@ -216,7 +216,7 @@ backend hbbr_wss_backend
     server srv_main 127.0.0.1:21119
 ```
 
-hbbs 伺服器啟動時
+hbbs 伺服器使用
 
 ```service
 [Unit]
@@ -256,11 +256,11 @@ WantedBy=multi-user.target
 
 [**常見問題**](https://github.com/rustdesk/rustdesk/wiki/FAQ)
 
-自託管您自己的 RustDesk 伺服器，它是免費且開源的。
+自託管您自己的 RustDesk 伺服器，它是免費和開源的。
 
 ## 如何手動構建
 
-首先，您需要有一個有效的 Rust 開發工具鏈和一個 Node ≥ 20 的工作安裝。
+首先，您需要有一個有效的 Rust 開發工具鏈和一個 Node ≥ 20 工作安裝。
 
 *   Unices（Linux、MacOS 等）：
 
@@ -280,44 +280,44 @@ set "DATABASE_URL=sqlite://%CD%/db_v2.sqlite3" && cargo build --release
 *   hbbr - RustDesk 中繼伺服器
 *   rustdesk-utils - RustDesk CLI 實用程式
 
-您可以在以下位置找到更新的二進位檔。[釋放](https://github.com/sctg-development/sctgdesk-server/releases)頁。
+您可以在[釋放](https://github.com/sctg-development/sctgdesk-server/releases)頁。
 
-版本 v1.1.99-40 之後發佈的所有二進位檔都使用 Github Actions 進行認證。您可以通過檢查二進位檔的sha256sum來檢查證明`https://search.sigstore.dev/?hash=<sha256>`例如。
+版本 v1.1.99-40 之後發佈的所有二進位檔都使用 Github Actions 進行證明。您可以通過使用`https://search.sigstore.dev/?hash=<sha256>`例如。
 
-如果您想要額外的功能[RustDesk 伺服器專業版](https://rustdesk.com/pricing.html)可能更適合你。
+如果您想要額外的功能[RustDesk 伺服器專業版](https://rustdesk.com/pricing.html)可能更適合您。
 
-如果你想開發自己的伺服器，[rustdesk-server-demo](https://github.com/rustdesk/rustdesk-server-demo)對你來說，可能比這個倉庫更好、更簡單的開始。
+如果你想開發自己的伺服器，[rustdesk-server-demo](https://github.com/rustdesk/rustdesk-server-demo)對您來說，可能比此 repo 更好、更簡單的開始。
 
 ## Docker 鏡像
 
 Docker 鏡像是自動生成的，並在每個 github 版本上發佈。
 
-這些圖像是針對`ubuntu-22.04`僅添加主要二進位檔（`hbbr`和`hbbs`).它們可在以下位置獲得[Docker 中心](https://hub.docker.com/r/sctg/sctgdesk-server/)帶有以下標籤：
+這些映像是針對`ubuntu-22.04`唯一新增的主二進位檔 （`hbbr`和`hbbs`).它們可在[Docker 中心](https://hub.docker.com/r/sctg/sctgdesk-server/)取代為這些標籤：
 
 |建築 |圖片：標籤 |
 |--- |--- |
-|AMD64 （英语） |`sctg/sctgdesk-server:latest`|
-|arm64v8 |`sctg/sctgdesk-server:latest`|
+|AMD64 系列 |`sctg/sctgdesk-server:latest`|
+|ARM64V8 |`sctg/sctgdesk-server:latest`|
 
-您可以直接使用以下命令開始這些圖像`docker run`使用以下命令：
+您可以直接使用`docker run`使用以下命令：
 
 ```bash
 docker run --name hbbs --net=host -v "$PWD/data:/usr/local/share/sctgdesk" -d sctg/sctgdesk-server:latest hbbs -r <relay-server-ip[:port]> 
 docker run --name hbbr --net=host -v "$PWD/data:/usr/local/share/sctgdesk" -d sctg/sctgdesk-server:latest hbbr 
 ```
 
-或不`--net=host`，但是P2P直連無法正常工作。
+或沒有`--net=host`，但 P2P 直連無法使用。
 
-對於使用 SELinux 的系統，將`/root`由`/root:z`是容器正常運行所必需的。或者，可以完全禁用 SELinux 容器分離，並添加該選項`--security-opt label=disable`.
+對於使用 SELinux 的系統，將`/root`由`/root:z`是容器正常運行所必需的。或者，可以完全禁用 SELinux 容器分離，並添加選項`--security-opt label=disable`.
 
 ```bash
 docker run --name hbbs -p 21114:21114 -p 21115:21115 -p 21116:21116 -p 21116:21116/udp -p 21118:21118 -v "$PWD/data:/usr/local/share/sctgdesk" -d sctg/sctgdesk-server:latest hbbs -r <relay-server-ip[:port]> 
 docker run --name hbbr -p 21117:21117 -p 21119:21119 -v "$PWD/data:/usr/local/share/sctgdesk" -d sctg/sctgdesk-serverlatest hbbr 
 ```
 
-這`relay-server-ip`參數是運行這些容器的伺服器的IP位址（或 DNS 名稱）。這**自選**`port`如果您使用的埠與以下埠不同，則必須使用參數**21117**為`hbbr`.
+這`relay-server-ip`parameter 是運行這些容器的伺服器的IP位址（或 DNS 名稱）。這**自選**`port`參數，如果使用的埠不同於**21117**為`hbbr`.
 
-您還可以使用 docker-compose，將此設定用作範本：
+您還可以使用 docker-compose，使用此配置作為範本：
 
 ```yaml
 version: '3'
@@ -360,23 +360,23 @@ services:
     restart: unless-stopped
 ```
 
-編輯第16行以指向您的中繼伺服器（偵聽埠 21117 的伺服器）。如果需要，您還可以編輯音量行（第 18 行和第 33 行）。
+編輯第16行以指向您的中繼伺服器（偵聽埠 21117 的伺服器）。如果需要，您還可以編輯體積行（第 18 行和第 33 行）。
 
-（docker-compose 功勞歸 @lukebarone 和 @QuiGonLeong）
+（docker-compose 功勞歸於 @lukebarone 和 @QuiGonLeong）
 
-> 注意這裡，中國的sctg/sctgdesk-server-server：latest可能會替換為dockerhub上的最新版本號，如sctg/sctgdesk-server-server：1.1.99-37。否則，可能會因鏡像加速而拉取舊版本。
+> 注意，這裡中國的 sctg/sctgdesk-server-server：latest 可能會替換為 dockerhub 上的最新版本號，例如 sctg/sctgdesk-server-server：1.1.99-37。否則，可能會因鏡像加速而拉取舊版本。
 
 ## 如何創建金鑰對
 
 加密需要金鑰對;如前所述，您可以提供它，但您需要一種方法來創建一個。
 
-您可以使用以下命令產生金鑰對：
+您可以使用此指令產生金鑰對：
 
 ```bash
 /usr/bin/rustdesk-utils genkeypair
 ```
 
-如果您沒有（或不想要）該`rustdesk-utils`包，您可以使用 Docker 呼叫相同的命令：
+如果您沒有（或不想要）`rustdesk-utils`套件，您可以使用 Docker 呼叫相同的命令：
 
 ```bash
 docker run --rm --entrypoint /usr/bin/rustdesk-utils  sctg/sctgdesk-server-server:latest genkeypair
@@ -391,8 +391,8 @@ Secret Key:  egAVd44u33ZEUIDTtksGcHeVeAwywarEdHmf99KM5ajwEsuG3NQFT9coAfiZ6nen4hf
 
 ## 包
 
-每個二進位檔都有單獨的.deb包，您可以在[釋放](https://github.com/sctg-development/sctgdesk-server/releases).
-這些包適用於以下發行版：
+每個二進位檔都有單獨的 .deb 包，您可以在[釋放](https://github.com/sctg-development/sctgdesk-server/releases).
+這些套件適用於以下發行版：
 
 *   Ubuntu 22.04 LTS
 *   MacOS Intel 或 Apple Silicon
@@ -400,21 +400,21 @@ Secret Key:  egAVd44u33ZEUIDTtksGcHeVeAwywarEdHmf99KM5ajwEsuG3NQFT9coAfiZ6nen4hf
 
 ## ENV 變數
 
-可以使用這些 ENV 變數來配置 hbbs 和 hbbr。
-您可以像往常一樣指定變數或使用`.env`檔。
+hbbs 和 hbbr 可以使用這些 ENV 變數進行配置。
+您可以像往常一樣指定變數，也可以使用`.env`檔。
 
 |變數 |二進位 |描述 |
 |--- |--- |--- |
-|ALWAYS_USE_RELAY |哈佛商學院 |如果設置為**“Y”**禁止直接對等連接 |
-|DOWNGRADE_START_CHECK |哈佛商業評論 |降級檢查前的延遲（以秒為單位） |
-|DOWNGRADE_THRESHOLD |哈佛商業評論 |降級檢查閾值 （bit/ms） |
-|鑰匙 |HBBS/HBBR |如果設置為強制使用特定鍵，如果設置為**"\_"**強制使用任何金鑰 |
-|LIMIT_SPEED |哈佛商業評論 |速度限制（Mb/s） |
-|OAUTH2\_CONFIG_FILE |哈佛商學院 |OAuth2 配置文件的路徑 |
-|OAUTH2\_CREATE_USER |哈佛商學院 |如果設置為**"1"**如果使用者不存在，請創建該使用者 |
-|港口 |HBBS/HBBR |偵聽埠（HBB 為 21116 - HBBR 為 21117） |
-|繼電器 |哈佛商學院 |運行 hbbr 的電腦的 IP 位址/DNS 名稱（用逗號分隔） |
-|RUST_LOG |全部 |設置調試級別（錯誤|警告|資訊|調試|跟蹤） |
-|S3CONFIG_FILE |哈佛商學院 |S3 配置文件的路徑 |
-|SINGLE_BANDWIDTH |哈佛商業評論 |單個連接的最大頻寬（以 Mb/s 為單位） |
-|TOTAL_BANDWIDTH |哈佛商業評論 |最大總頻寬（單位：Mb/s） |
+|ALWAYS_USE_RELAY |HBBS |如果設置為**“Y”**不允許直接對等連接 |
+|DOWNGRADE_START_CHECK |HBBBR |降級檢查前的延遲（以秒為單位） |
+|DOWNGRADE_THRESHOLD |HBBBR |降級檢查閾值 （bit/ms） |
+|密鑰 |HBBS/HBBR |如果設置為 ，則強制使用特定密鑰，如果設置為**"\_"**強制使用任意鍵 |
+|LIMIT_SPEED |HBBBR |速度限制（Mb/s） |
+|OAUTH2\_CONFIG_FILE |HBBS |OAuth2 配置文件的路徑 |
+|OAUTH2\_CREATE_USER |HBBS |如果設置為**"1"**創建不存在的使用者 |
+|埠 |HBBS/HBBR |偵聽埠（HBB 為 21116 - HBBR 為 21117）|
+|繼電器 |HBBS |運行 hbbr 的電腦的 IP 位址/DNS 名稱（以逗號分隔） |
+|RUST_LOG |全部 |設置調試級別 （error|warn|info|debug|trace） |
+|S3CONFIG_FILE |HBBS |S3 配置文件的路徑 |
+|SINGLE_BANDWIDTH |HBBBR |單個連接的最大頻寬（以 Mb/s 為單位） |
+|TOTAL_BANDWIDTH |HBBBR |最大總頻寬（以 Mb/s 為單位） |

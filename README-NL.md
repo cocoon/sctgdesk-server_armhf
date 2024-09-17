@@ -4,7 +4,7 @@
   <a href="#how-to-create-a-keypair">Keypair</a> •
   <a href="#packages">Binaries</a> •
   <a href="#env-variables">Variables</a><br>
-  [<a href="README-FR.md">French</a>] | [<a href="README-DE.md">Deutsch</a>] | [<a href="README-NL.md">Nederlands</a>] | [<a href="README-TW.md">繁體中文</a>] | [<a href="README-ZH.md">简体中文</a>]<br>
+  [<a href="README-FR.md">French</a>] | [<a href="README-DE.md">Deutsch</a>] | [<a href="README-NL.md">Nederlands</a>] | [<a href="README-TW.md">繁體中文</a>] | [<a href="README-ZH.md">简体中文</a>] | [<a href="README-RU.md">Русский</a>]<br>
 </p>
 
 # SctgDesk Server Programma
@@ -23,12 +23,12 @@ Dit is een aangepaste versie van RustDesk Server, die gratis en open source is.
 *   Het tweede verschil is dat deze versie een voorlopige implementatie van de Rustdesk Server Pro API-server bevat.
     *   Ondersteuning voor persoonlijk adresboek
     *   Ondersteuning voor gedeeld adresboek op groepsniveau
-        *   Alleen-lezen, lezen-schrijven, beheerder
+        *   alleen-lezen, lezen-schrijven, admin
     *   Ondersteuning voor gedeeld adresboek op gebruikersniveau
-        *   Alleen-lezen, lezen-schrijven, beheerder
+        *   alleen-lezen, lezen-schrijven, admin
 *   Het derde verschil is dat deze versie een voorlopige implementatie van een eenvoudige webconsole bevat.
 
-De webconsole is toegankelijk op het volgende adres `http://<server-ip>:21114/` met login "admin" en wachtwoord "Hallo, wereld!" .\
+De webconsole is toegankelijk op het adres `http://<server-ip>:21114/` met login "admin" en wachtwoord "Hallo, wereld!" .\
 U kunt de API-documentatie in de ingebouwde API-server doorzoeken op het adres `http://<server-ip>:21114/api/doc/`.
 
 Een niet-interactieve API-documentatie is beschikbaar op [sctgdesk-api-server opslagplaats](https://sctg-development.github.io/sctgdesk-api-server/).
@@ -84,7 +84,7 @@ mkdir -p data
 docker-compose up 
 ```
 
-### Standaard beheerdersgebruiker
+### Standaard admin-gebruiker
 
 De standaard admin-gebruiker wordt gemaakt met de gebruikersnaam `admin` en het wachtwoord `Hello,world!`. U kunt het wachtwoord wijzigen na de eerste keer inloggen op de webconsole.
 
@@ -92,7 +92,7 @@ De standaard admin-gebruiker wordt gemaakt met de gebruikersnaam `admin` en het 
 
 De api standalone versie is een versie van de server die de API-server en de webconsole bevat, maar niet de rendez-vous server.\
 De standalone versie is beschikbaar in een eigen repository [sctgdesk-api-server](https://github.com/sctg-development/sctgdesk-api-server).\
-Voor alle api of webconsole gerelateerde problemen, verwijzen wij u naar de [sctgdesk-api-server](https://github.com/sctg-development/sctgdesk-api-server) opslagplaats.
+Voor alle api- of webconsole-gerelateerde problemen verwijzen wij u naar de [sctgdesk-api-server](https://github.com/sctg-development/sctgdesk-api-server) opslagplaats.
 
 ## Schermafbeeldingen
 
@@ -118,7 +118,7 @@ Voor alle api of webconsole gerelateerde problemen, verwijzen wij u naar de [sct
 
 <img width="1502" alt="apidoc" src="https://github.com/sctg-development/sctgdesk-server/assets/165936401/88fe7910-fe62-43e5-a16c-70dc1201e040">
 
-### Gebruik in de Rustdesk-client
+### Gebruik in Rustdesk client
 
 <img width="913" alt="Capture d’écran 2024-05-24 à 12 14 34" src="https://github.com/sctg-development/sctgdesk-server/assets/165936401/1b253577-dce2-4163-9a49-ba4b3da37812">
 
@@ -258,7 +258,7 @@ WantedBy=multi-user.target
 
 Zelf uw eigen RustDesk-server hosten, deze is gratis en open source.
 
-## Hoe handmatig te bouwen
+## Handmatig bouwen
 
 Eerst moet je een werkende Rust-ontwikkelingstoolchain en een Node ≥ 20 werkende installatie hebben.
 
@@ -282,9 +282,9 @@ Er worden drie uitvoerbare bestanden gegenereerd in target/release.
 
 U kunt bijgewerkte binaire bestanden vinden op de [Releases](https://github.com/sctg-development/sctgdesk-server/releases) bladzijde.
 
-Alle vrijgegeven binaire bestanden na release v1.1.99-40 worden geattesteerd met Github Actions. U kunt de attestatie controleren door de sha256som van het binaire bestand te controleren met `https://search.sigstore.dev/?hash=<sha256>` bijvoorbeeld.
+Alle vrijgegeven binaire bestanden na release v1.1.99-40 worden geattesteerd met Github-acties. U kunt de attestatie controleren door de sha256som van het binaire bestand te controleren met `https://search.sigstore.dev/?hash=<sha256>` bijvoorbeeld.
 
-Als je extra functies wilt [RustDesk Server Pro](https://rustdesk.com/pricing.html) misschien beter bij je past.
+Als je extra functies wilt [RustDesk Server Pro](https://rustdesk.com/pricing.html) zou misschien beter bij je passen.
 
 Als u uw eigen server wilt ontwikkelen, [rustdesk-server-demo](https://github.com/rustdesk/rustdesk-server-demo) is misschien een betere en eenvoudigere start voor u dan deze repo.
 
@@ -299,7 +299,7 @@ Deze beelden zijn gebouwd tegen `ubuntu-22.04` met de enige toevoeging van de be
 | AMD64 | `sctg/sctgdesk-server:latest` |
 | arm64v8 | `sctg/sctgdesk-server:latest` |
 
-U kunt deze afbeeldingen direct starten met `docker run` met deze opdrachten:
+U kunt deze afbeeldingen direct starten met `docker run` met deze commando's:
 
 ```bash
 docker run --name hbbs --net=host -v "$PWD/data:/usr/local/share/sctgdesk" -d sctg/sctgdesk-server:latest hbbs -r <relay-server-ip[:port]> 
@@ -360,11 +360,11 @@ services:
     restart: unless-stopped
 ```
 
-Bewerk regel 16 om naar uw relay-server te verwijzen (degene die luistert op poort 21117). U kunt ook de volumelijnen (regel 18 en lijn 33) bewerken als u dat nodig heeft.
+Bewerk regel 16 om naar uw relay-server te verwijzen (degene die luistert op poort 21117). U kunt ook de volumelijnen (lijn 18 en lijn 33) bewerken als dat nodig is.
 
 (Docker-Compose Credits gaat naar @lukebarone en @QuiGonLeong)
 
-> Houd er rekening mee dat hier de sctg/sctgdesk-server-server:latest in China kan worden vervangen door het nieuwste versienummer op dockerhub, zoals sctg/sctgdesk-server-server:1.1.99-37. Anders kan de oude versie worden teruggetrokken vanwege beeldversnelling.
+> Merk op dat hier de sctg/sctgdesk-server-server:latest in China kan worden vervangen door het nieuwste versienummer op dockerhub, zoals sctg/sctgdesk-server-server:1.1.99-37. Anders kan de oude versie worden teruggetrokken vanwege beeldversnelling.
 
 ## Hoe maak je een sleutelpaar aan?
 
@@ -405,16 +405,16 @@ U kunt de variabelen zoals gewoonlijk specificeren of een `.env` bestand.
 
 | variabel | binair | Beschrijving |
 | --- | --- | --- |
-| ALWAYS_USE_RELAY | HBBS | indien ingesteld op **"Y"** Directe peer-verbinding is niet toegestaan |
+| ALWAYS_USE_RELAY | hbbs | indien ingesteld op **"Y"** Directe peer-verbinding is niet toegestaan |
 | DOWNGRADE_START_CHECK | HBBR | Vertraging (in seconden) voor downgradecontrole |
-| DOWNGRADE_THRESHOLD | HBBR | Drempel van downgradecontrole (bit/ms) |
+| DOWNGRADE_THRESHOLD | HBBR | Drempel voor downgradecontrole (bit/ms) |
 | SLEUTEL | HBBS/HBBR | indien ingesteld dwingt u het gebruik van een specifieke toets af, indien ingesteld op **"\_"** Forceer het gebruik van een sleutel |
 | LIMIT_SPEED | HBBR | snelheidslimiet (in Mb/s) |
-| OAUTH2\_CONFIG_FILE | HBBS | Pad voor OAUTH2 config bestand |
-| OAUTH2\_CREATE_USER | HBBS | indien ingesteld op **"1"** Een gebruiker maken als deze niet bestaat |
-| POORT | HBBS/HBBR | Luisterpoort (21116 voor HBBS - 21117 voor HBBR) |
-| RELAIS | HBBS | IP-adres/DNS-naam van de machines waarop hbbr draait (gescheiden door komma's) |
-| RUST_LOG | allemaal | Foutopsporingsniveau instellen (fout|waarschuwen|info|debug|trace) |
-| S3CONFIG_FILE | HBBS | Pad voor S3 configuratiebestand |
+| OAUTH2\_CONFIG_FILE | hbbs | Pad voor OAUTH2 configuratiebestand |
+| OAUTH2\_CREATE_USER | hbbs | indien ingesteld op **"1"** Een gebruiker maken als deze niet bestaat |
+| HAVEN | HBBS/HBBR | Luisterpoort (21116 voor HBBS - 21117 voor HBBR) |
+| RELAIS | hbbs | IP-adres/DNS-naam van de machines waarop hbbr draait (gescheiden door komma's) |
+| RUST_LOG | allemaal | Foutopsporingsniveau instellen (fout|waarschuwen|info|debuggen|traceren) |
+| S3CONFIG_FILE | hbbs | Pad voor S3 configuratiebestand |
 | SINGLE_BANDWIDTH | HBBR | maximale bandbreedte voor een enkele verbinding (in Mb/s) |
 | TOTAL_BANDWIDTH | HBBR | maximale totale bandbreedte (in Mb/s) |
