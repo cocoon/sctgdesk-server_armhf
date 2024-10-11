@@ -244,6 +244,11 @@ RestartSec=10
 WantedBy=multi-user.target
 ```
 
+# 限制不需要的访问
+
+这`--logged-in-only`选项或`LOGGED_IN_ONLY=Y`Environment 设置可用于 HBBS 服务器。此选项将控件限制为仅登录用户。\
+即使设置了此选项，用户仍然可以在 Renvez-vous 服务器中注册，但无法控制另一个服务器。
+
 # RustDesk 服务器程序
 
 [![build](https://github.com/sctg-development/sctgdesk-server/actions/workflows/multiarch-docker-hub.yml/badge.svg)](https://github.com/sctg-development/sctgdesk-server/actions/workflows/multiarch-docker-hub.yml)

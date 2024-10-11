@@ -244,6 +244,11 @@ RestartSec=10
 WantedBy=multi-user.target
 ```
 
+# Limiter les accès indésirables
+
+Le `--logged-in-only` ou l’option `LOGGED_IN_ONLY=Y` Le paramètre d’environnement est disponible pour le serveur HBBS. Cette option limitera le contrôle aux utilisateurs connectés uniquement.\
+Même si cette option est activée, les utilisateurs pourront toujours s’inscrire sur le serveur Renvez-vous, mais ne pourront pas en contrôler un autre.
+
 # Programme de serveur RustDesk
 
 [![build](https://github.com/sctg-development/sctgdesk-server/actions/workflows/multiarch-docker-hub.yml/badge.svg)](https://github.com/sctg-development/sctgdesk-server/actions/workflows/multiarch-docker-hub.yml)

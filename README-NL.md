@@ -244,6 +244,11 @@ RestartSec=10
 WantedBy=multi-user.target
 ```
 
+# Beperk ongewenste toegang
+
+De `--logged-in-only` optie of de `LOGGED_IN_ONLY=Y` Omgevingsinstelling is beschikbaar voor de HBBS-server. Met deze optie wordt de controle beperkt tot alleen ingelogde gebruikers.\
+Zelfs als deze optie is ingesteld, kunnen gebruikers zich nog steeds registreren op de Renvez-vous-server, maar kunnen ze geen andere server beheren.
+
 # RustDesk Server Programma
 
 [![build](https://github.com/sctg-development/sctgdesk-server/actions/workflows/multiarch-docker-hub.yml/badge.svg)](https://github.com/sctg-development/sctgdesk-server/actions/workflows/multiarch-docker-hub.yml)
