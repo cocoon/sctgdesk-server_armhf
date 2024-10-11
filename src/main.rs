@@ -77,7 +77,8 @@ fn main() -> ResultType<()> {
         -r, --relay-servers=[HOST] 'Sets the default relay servers, separated by comma'
         -M, --rmem=[NUMBER(default={RMEM})] 'Sets UDP recv buffer size, set system rmem_max first, e.g., sudo sysctl -w net.core.rmem_max=52428800. vi /etc/sysctl.conf, net.core.rmem_max=52428800, sudo sysctl –p'
         , --mask=[MASK] 'Determine if the connection comes from LAN, e.g. 192.168.0.0/16'
-        -k, --key=[KEY] 'Only allow the client with the same key'",
+        -k, --key=[KEY] 'Only allow the client with the same key'
+        , --logged-in-only 'Only allow logged in user to control'",
     );
     init_args(&args, "hbbs", "RustDesk ID/Rendezvous Server");
     let port = get_arg_or("port", RENDEZVOUS_PORT.to_string()).parse::<i32>()?;
@@ -86,7 +87,7 @@ fn main() -> ResultType<()> {
     }
     let rmem = get_arg("rmem").parse::<usize>().unwrap_or(RMEM);
     let serial: i32 = get_arg("serial").parse().unwrap_or(0);
-    
+
     std::env::set_var("MAIN_PKG_VERSION", env!("CARGO_PKG_VERSION"));
     let handle = thread::spawn(|| {
         let rt = rocket::tokio::runtime::Runtime::new().unwrap();

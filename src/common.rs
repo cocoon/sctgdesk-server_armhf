@@ -77,6 +77,9 @@ pub fn init_args(args: &str, name: &str, about: &str) {
             }
         }
     }
+    if matches.is_present("logged-in-only") {
+        std::env::set_var("LOGGED_IN_ONLY", "Y");
+    }
     for (k, v) in matches.args {
         if let Some(v) = v.vals.first() {
             std::env::set_var(arg_name(k), v.to_string_lossy().to_string());

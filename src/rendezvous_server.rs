@@ -813,6 +813,8 @@ impl RendezvousServer {
             });
             return Ok((msg_out, None));
         }
+        // For limiting abuse, only allow logged in users to punch hole
+        // if LOGGED_IN_ONLY=Y is set in env or --logged-in-only is passed
         if ph.token.is_empty() && std::env::var("LOGGED_IN_ONLY")
             .unwrap_or_default()
             .to_uppercase()
