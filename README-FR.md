@@ -246,8 +246,28 @@ WantedBy=multi-user.target
 
 # Limiter les accès indésirables
 
-Le `--logged-in-only` ou l’option `LOGGED_IN_ONLY=Y` Le paramètre d’environnement est disponible pour le serveur HBBS. Cette option limitera le contrôle aux utilisateurs connectés uniquement.\
-Même si cette option est activée, les utilisateurs pourront toujours s’inscrire sur le serveur Renvez-vous, mais ne pourront pas en contrôler un autre.
+Pour restreindre l’accès à votre serveur, vous pouvez utiliser l’option `--logged-in-only` ou définir l’option `LOGGED_IN_ONLY=Y` pour la variable `hbbs` serveur. Cela limitera le contrôle aux utilisateurs connectés uniquement.
+
+Même avec cette option activée, les utilisateurs peuvent toujours s’inscrire sur le serveur Rendez-vous, mais ils ne pourront pas contrôler le pair d’un autre utilisateur. Si quelqu’un essaie de contrôler un homologue sans être connecté, il recevra un message d’erreur :
+
+<img width="524" alt="Error message for unauthenticated control attempt" src="https://github.com/user-attachments/assets/cfa46504-39d8-46a7-9072-3ece6818b4a3">
+
+En activant cette fonctionnalité, vous pouvez ajouter une couche de sécurité supplémentaire à votre serveur et empêcher tout accès non autorisé.
+
+**Configuration `LOGGED_IN_ONLY`**
+
+Pour activer cette fonctionnalité :
+
+1.  Réglez l’icône `LOGGED_IN_ONLY=Y` pour la variable `hbbs` serveur.
+2.  Vous pouvez également utiliser l’icône `--logged-in-only` lors de l’exécution de l’option `hbbs` serveur.
+
+**Exemple**
+
+Pour définir le `LOGGED_IN_ONLY` , vous pouvez ajouter la ligne suivante à votre `~/.bashrc` fichier ou équivalent :
+
+```bash
+export LOGGED_IN_ONLY=Y
+```
 
 # Programme de serveur RustDesk
 

@@ -246,8 +246,28 @@ WantedBy=multi-user.target
 
 # 限制不需要的访问
 
-这`--logged-in-only`选项或`LOGGED_IN_ONLY=Y`Environment 设置可用于 HBBS 服务器。此选项将控件限制为仅登录用户。\
-即使设置了此选项，用户仍然可以在 Renvez-vous 服务器中注册，但无法控制另一个服务器。
+要限制对服务器的访问，您可以使用`--logged-in-only`选项或将`LOGGED_IN_ONLY=Y`环境变量`hbbs`服务器。这会将控制权限制为仅登录用户。
+
+即使启用此选项，用户仍然可以在 Rendez-vous 服务器上注册，但他们将无法控制其他用户的对等体。如果有人试图在未登录的情况下控制对等节点，他们将收到一条错误消息：
+
+<img width="524" alt="Error message for unauthenticated control attempt" src="https://github.com/user-attachments/assets/cfa46504-39d8-46a7-9072-3ece6818b4a3">
+
+通过启用此功能，您可以为服务器添加额外的安全层并防止未经授权的访问。
+
+**配置`LOGGED_IN_ONLY`**
+
+要启用此功能，请执行以下操作：
+
+1.  将`LOGGED_IN_ONLY=Y`环境变量`hbbs`服务器。
+2.  或者，您可以使用`--logged-in-only`选项。`hbbs`服务器。
+
+**例**
+
+要将`LOGGED_IN_ONLY`环境变量中，您可以将以下行添加到`~/.bashrc`file 或等效文件：
+
+```bash
+export LOGGED_IN_ONLY=Y
+```
 
 # RustDesk 服务器程序
 
@@ -297,32 +317,32 @@ set "DATABASE_URL=sqlite://%CD%/db_v2.sqlite3" && cargo build --release
 
 Docker 镜像是自动生成的，并在每个 github 版本上发布。
 
-这些映像是针对`ubuntu-22.04`唯一添加的主二进制文件 （`hbbr`和`hbbs`).它们可在[Docker 中心](https://hub.docker.com/r/sctg/sctgdesk-server/)替换为这些标签：
+这些映像是针对`ubuntu-22.04` with the only addition of the main binaries (`hbbr` and `hbbs`). They're available on [Docker hub](https://hub.docker.com/r/sctg/sctgdesk-server/) with these tags:
 
-|建筑 |图片：标签 |
-|--- |--- |
-|AMD64 系列 |`sctg/sctgdesk-server:latest`|
-|ARM64V8 |`sctg/sctgdesk-server:latest`|
+| architecture | image:tag |
+| --- | --- |
+| amd64 | `sctg/sctgdesk-server:latest` |
+| arm64v8 | `sctg/sctgdesk-server:latest` |
 
-您可以直接使用`docker run`使用以下命令：
+You can start these images directly with `docker run` with these commands:
 
 ```bash
 docker run --name hbbs --net=host -v "$PWD/data:/usr/local/share/sctgdesk" -d sctg/sctgdesk-server:latest hbbs -r <relay-server-ip[:port]> 
 docker run --name hbbr --net=host -v "$PWD/data:/usr/local/share/sctgdesk" -d sctg/sctgdesk-server:latest hbbr 
 ```
 
-或没有`--net=host`，但 P2P 直连无法使用。
+or without `--net=host`, but P2P direct connection can not work.
 
-对于使用 SELinux 的系统，将`/root`由`/root:z`是容器正常运行所必需的。或者，可以完全禁用 SELinux 容器分离，并添加选项`--security-opt label=disable`.
+For systems using SELinux, replacing `/root` by `/root:z` is required for the containers to run correctly. Alternatively, SELinux container separation can be disabled completely adding the option `--security-opt label=disable`.
 
 ```bash
 docker run --name hbbs -p 21114:21114 -p 21115:21115 -p 21116:21116 -p 21116:21116/udp -p 21118:21118 -v "$PWD/data:/usr/local/share/sctgdesk" -d sctg/sctgdesk-server:latest hbbs -r <relay-server-ip[:port]> 
 docker run --name hbbr -p 21117:21117 -p 21119:21119 -v "$PWD/data:/usr/local/share/sctgdesk" -d sctg/sctgdesk-serverlatest hbbr 
 ```
 
-这`relay-server-ip`parameter 是运行这些容器的服务器的 IP 地址（或 DNS 名称）。这**自选**`port`参数，如果使用的端口不同于**21117**为`hbbr`.
+The `relay-server-ip` parameter is the IP address (or dns name) of the server running these containers. The **optional** `port` parameter has to be used if you use a port different than **21117** for `hbbr`.
 
-您还可以使用 docker-compose，使用此配置作为模板：
+You can also use docker-compose, using this configuration as a template:
 
 ```yaml
 version: '3'
@@ -365,61 +385,61 @@ services:
     restart: unless-stopped
 ```
 
-编辑第 16 行以指向您的中继服务器（侦听端口 21117 的服务器）。如果需要，您还可以编辑体积行（第 18 行和第 33 行）。
+Edit line 16 to point to your relay server (the one listening on port 21117). You can also edit the volume lines (line 18 and line 33) if you need.
 
-（docker-compose 功劳归于 @lukebarone 和 @QuiGonLeong）
+(docker-compose credit goes to @lukebarone and @QuiGonLeong)
 
-> 注意，这里中国的 sctg/sctgdesk-server-server：latest 可能会替换为 dockerhub 上的最新版本号，例如 sctg/sctgdesk-server-server：1.1.99-37。否则，可能会因镜像加速而拉取旧版本。
+> Note that here, the sctg/sctgdesk-server-server:latest in China may be replaced with the latest version number on dockerhub, such as sctg/sctgdesk-server-server:1.1.99-37. Otherwise, the old version may be pulled due to image acceleration.
 
-## 如何创建密钥对
+## How to create a keypair
 
-加密需要密钥对;如前所述，您可以提供它，但您需要一种方法来创建一个。
+A keypair is needed for encryption; you can provide it, as explained before, but you need a way to create one.
 
-您可以使用此命令生成密钥对：
+You can use this command to generate a keypair:
 
 ```bash
 /usr/bin/rustdesk-utils genkeypair
 ```
 
-如果您没有（或不想要）`rustdesk-utils`软件包，您可以使用 Docker 调用相同的命令：
+If you don't have (or don't want) the `rustdesk-utils` package installed on your system, you can invoke the same command with docker:
 
 ```bash
 docker run --rm --entrypoint /usr/bin/rustdesk-utils  sctg/sctgdesk-server-server:latest genkeypair
 ```
 
-输出将如下所示：
+The output will be something like this:
 
 ```text
 Public Key:  8BLLhtzUBU/XKAH4mep3p+IX4DSApe7qbAwNH9nv4yA=
 Secret Key:  egAVd44u33ZEUIDTtksGcHeVeAwywarEdHmf99KM5ajwEsuG3NQFT9coAfiZ6nen4hfgNICl7upsDA0f2e/jIA==
 ```
 
-## 包
+## Packages
 
-每个二进制文件都有单独的 .deb 包，您可以在[释放](https://github.com/sctg-development/sctgdesk-server/releases).
-这些软件包适用于以下发行版：
+Separate .deb packages are available for each binary, you can find them in the [releases](https://github.com/sctg-development/sctgdesk-server/releases).
+These packages are meant for the following distributions:
 
 *   Ubuntu 22.04 LTS
-*   MacOS Intel 或 Apple Silicon
-*   Windows x86\_64 或 i686
+*   MacOS Intel or Apple Silicon
+*   Windows x86\_64 or i686
 
-## ENV 变量
+## ENV variables
 
-hbbs 和 hbbr 可以使用这些 ENV 变量进行配置。
-您可以像往常一样指定变量，也可以使用`.env`文件。
+hbbs and hbbr can be configured using these ENV variables.
+You can specify the variables as usual or use an `.env` file.
 
-|变量 |二进制 |描述 |
-|--- |--- |--- |
-|ALWAYS_USE_RELAY |HBBS |如果设置为**“Y”**不允许直接对等连接 |
-|DOWNGRADE_START_CHECK |HBBBR |降级检查前的延迟（以秒为单位） |
-|DOWNGRADE_THRESHOLD |HBBBR |降级检查阈值 （bit/ms） |
-|密钥 |HBBS/HBBR |如果设置为 ，则强制使用特定密钥，如果设置为**"\_"**强制使用任意键 |
-|LIMIT_SPEED |HBBBR |速度限制（Mb/s） |
-|OAUTH2\_CONFIG_FILE |HBBS |OAuth2 配置文件的路径 |
-|OAUTH2\_CREATE_USER |HBBS |如果设置为**"1"**创建不存在的用户 |
-|端口 |HBBS/HBBR |侦听端口（HBB 为 21116 - HBBR 为 21117）|
-|继电器 |HBBS |运行 hbbr 的计算机的 IP 地址/DNS 名称（以逗号分隔） |
-|RUST_LOG |全部 |设置调试级别 （error|warn|info|debug|trace） |
-|S3CONFIG_FILE |HBBS |S3 配置文件的路径 |
-|SINGLE_BANDWIDTH |HBBBR |单个连接的最大带宽（以 Mb/s 为单位） |
-|TOTAL_BANDWIDTH |HBBBR |最大总带宽（以 Mb/s 为单位） |
+| variable | binary | description |
+| --- | --- | --- |
+| ALWAYS_USE_RELAY | hbbs | if set to **"Y"** disallows direct peer connection |
+| DOWNGRADE_START_CHECK | hbbr | delay (in seconds) before downgrade check |
+| DOWNGRADE_THRESHOLD | hbbr | threshold of downgrade check (bit/ms) |
+| KEY | hbbs/hbbr | if set force the use of a specific key, if set to **"\_"** force the use of any key |
+| LIMIT_SPEED | hbbr | speed limit (in Mb/s) |
+| OAUTH2\_CONFIG_FILE | hbbs | path for oauth2 config file |
+| OAUTH2\_CREATE_USER | hbbs | if set to **"1"** create a user if it doesn't exist |
+| PORT | hbbs/hbbr | listening port (21116 for hbbs - 21117 for hbbr) |
+| RELAY | hbbs | IP address/DNS name of the machines running hbbr (separated by comma) |
+| RUST_LOG | all | set debug level (error|warn|info|debug|trace) |
+| S3CONFIG_FILE | hbbs | path for s3 config file |
+| SINGLE_BANDWIDTH | hbbr | max bandwidth for a single connection (in Mb/s) |
+| TOTAL_BANDWIDTH | hbbr | max total bandwidth (in Mb/s) |

@@ -246,8 +246,28 @@ WantedBy=multi-user.target
 
 # 限制不需要的訪問
 
-這`--logged-in-only`選項或`LOGGED_IN_ONLY=Y`Environment 設置可用於 HBBS 伺服器。此選項將控制項限制為僅登錄使用者。\
-即使設置了此選項，使用者仍然可以在 Renvez-vous 伺服器中註冊，但無法控制另一個伺服器。
+要限制對伺服器的訪問，您可以使用`--logged-in-only`選項或將`LOGGED_IN_ONLY=Y`環境變數`hbbs`伺服器。這會將控制權限制為僅登錄使用者。
+
+即使啟用此選項，使用者仍然可以在 Rendez-vous 伺服器上註冊，但他們將無法控制其他使用者的對等體。如果有人試圖在未登錄的情況下控制對等節點，他們將收到一條錯誤消息：
+
+<img width="524" alt="Error message for unauthenticated control attempt" src="https://github.com/user-attachments/assets/cfa46504-39d8-46a7-9072-3ece6818b4a3">
+
+通過啟用此功能，您可以為伺服器添加額外的安全層並防止未經授權的訪問。
+
+**配置`LOGGED_IN_ONLY`**
+
+要啟用此功能，請執行以下操作：
+
+1.  將`LOGGED_IN_ONLY=Y`環境變數`hbbs`伺服器。
+2.  或者，您可以使用`--logged-in-only`選項。`hbbs`伺服器。
+
+**例**
+
+要將`LOGGED_IN_ONLY`環境變數中，您可以將以下行添加到`~/.bashrc`file 或等效檔：
+
+```bash
+export LOGGED_IN_ONLY=Y
+```
 
 # RustDesk 伺服器程式
 
