@@ -246,10 +246,30 @@ RestartSec=10
 WantedBy=multi-user.target
 ```
 
-# Limit unwanted access
+# Limit Unwanted Access
 
-The `--logged-in-only` option or the `LOGGED_IN_ONLY=Y` environment setting is available for the hbbs server. This option will limit the control to logged in users only.  
-Even if this option is set users will still be able to register in the Renvez-vous server but won't be able to control another one.
+To restrict access to your server, you can use the `--logged-in-only` option or set the `LOGGED_IN_ONLY=Y` environment variable for the `hbbs` server. This will limit control to logged-in users only.
+
+Even with this option enabled, users can still register on the Rendez-vous server, but they won't be able to control another user's peer. If someone tries to control a peer without being logged in, they'll receive an error message:
+
+<img width="524" alt="Error message for unauthenticated control attempt" src="https://github.com/user-attachments/assets/cfa46504-39d8-46a7-9072-3ece6818b4a3">
+
+By enabling this feature, you can add an extra layer of security to your server and prevent unauthorized access.
+
+**Configuring `LOGGED_IN_ONLY`**
+
+To enable this feature:
+
+1. Set the `LOGGED_IN_ONLY=Y` environment variable for the `hbbs` server.
+2. Alternatively, you can use the `--logged-in-only` option when running the `hbbs` server.
+
+**Example**
+
+To set the `LOGGED_IN_ONLY` environment variable, you can add the following line to your `~/.bashrc` file or equivalent:
+```bash
+export LOGGED_IN_ONLY=Y
+```
+
 
 # RustDesk Server Program
 
