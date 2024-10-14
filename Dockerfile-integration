@@ -1,4 +1,6 @@
-FROM ubuntu:jammy as builder
+# Copyright 2024 SCTG Development - Ronan LE MEILLAT
+# SPDX-License-Identifier: AGPL-3.0
+FROM ubuntu:jammy AS builder
 ENV NODE_VERSION=20.13.1
 RUN apt-get update && apt-get install -y curl build-essential debhelper devscripts pkg-config libssl-dev zip
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y

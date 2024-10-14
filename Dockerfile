@@ -1,4 +1,6 @@
-FROM sctg/sctgdesk-server-integration:latest as builder
+# Copyright 2024 SCTG Development - Ronan LE MEILLAT
+# SPDX-License-Identifier: AGPL-3.0
+FROM sctg/sctgdesk-server-integration:latest AS builder
 
 FROM ubuntu:jammy
 RUN mkdir -p /usr/local/bin
