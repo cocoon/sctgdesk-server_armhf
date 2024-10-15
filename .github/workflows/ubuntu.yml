@@ -12,10 +12,10 @@ jobs:
       fail-fast: false
       matrix:
         job:
-          - { name: "amd64",   target: "x86_64-unknown-linux-gnu", cc: "gcc" }
-          - { name: "arm64v8", target: "aarch64-unknown-linux-gnu", cc: "aarch64-linux-gnu-gcc" }
-          - { name: "armv7hf", target: "armv7-unknown-linux-gnueabihf", cc: "arm-linux-gnueabihf-gcc" }
-          - { name: "i386",    target: "i686-unknown-linux-gnu", cc: "i686-linux-gnu-gcc" }
+          - { name: "amd64",   target: "x86_64-unknown-linux-gnu", cc: "gcc" , cflags: "" }
+          - { name: "arm64v8", target: "aarch64-unknown-linux-gnu", cc: "aarch64-linux-gnu-gcc", cflags: "-O0 -ffunction-sections -fdata-sections -fPIC"}
+          - { name: "armv7hf", target: "armv7-unknown-linux-gnueabihf", cc: "arm-linux-gnueabihf-gcc", cflags: "-O0 -ffunction-sections -fdata-sections -fPIC" }
+          - { name: "i386",    target: "i686-unknown-linux-gnu", cc: "i686-linux-gnu-gcc", cflags: "-m32" }
     runs-on: ubuntu-22.04
     permissions:
       id-token: write
@@ -66,6 +66,7 @@ jobs:
       run: |
         cargo update -p sctgdesk-api-server
         export CC=${{ matrix.job.cc }}
+        export CFLAGS=${{ matrix.job.cflags }}
         DATABASE_URL=sqlite://$(pwd)/db_v2.sqlite3 cargo build --release --target=${{ matrix.job.target }}
         ls -lR target
 
