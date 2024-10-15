@@ -33,9 +33,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y curl build-essential debhelper devscripts pkg-config libssl-dev libsqlite3-dev zip clang lld clang-tools
       
-          # Installer les outils de cross-compilation pour les différentes architectures
-          sudo apt-get install -y clang-12-aarch64-linux-gnu clang-12-arm-linux-gnueabihf clang-12-i686-linux-gnu
-      
     - name: Install Rust toolchain
       uses: crusty-pie/toolchain@main
       with:
