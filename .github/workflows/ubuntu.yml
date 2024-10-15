@@ -12,10 +12,11 @@ jobs:
       fail-fast: false
       matrix:
         job:
-          - { name: "amd64",   target: "x86_64-unknown-linux-gnu", cc: "gcc" , cflags: "" }
-          - { name: "arm64v8", target: "aarch64-unknown-linux-gnu", cc: "aarch64-linux-gnu-gcc", cflags: "-O0 -ffunction-sections -fdata-sections -fPIC"}
-          - { name: "armv7hf", target: "armv7-unknown-linux-gnueabihf", cc: "arm-linux-gnueabihf-gcc", cflags: "-O0 -ffunction-sections -fdata-sections -fPIC" }
-          - { name: "i386",    target: "i686-unknown-linux-gnu", cc: "i686-linux-gnu-gcc", cflags: "-m32" }
+          - { name: "amd64",    target: "x86_64-unknown-linux-gnu", cc: "gcc" , rustflags: "" }
+          - { name: "amd64musl",target: "x86_64-unknown-linux-musl", cc: "clang -target x86_64-unknown-linux-musl -fuse-ld=lld"  , rustflags: "-C linker=clang -C link-arg=--target=x86_6464-unknown-linux-musl -C link-arg=-fuse-ld=lld" }
+          - { name: "arm64v8",  target: "aarch64-unknown-linux-musl", cc: "clang -target aarch64-unknown-linux-musl -fuse-ld=lld", rustflags: "-C linker=clang -C link-arg=--target=aarch64-unknown-linux-musl -C link-arg=-fuse-ld=lld"}
+          - { name: "armv7hf",  target: "armv7-unknown-linux-gnueabihf", cc: "arm-linux-gnueabihf-gcc", rustflags: "-O0 -ffunction-sections -fdata-sections -fPIC" }
+          - { name: "i386",     target: "i686-unknown-linux-gnu", cc: "i686-linux-gnu-gcc", rustflags: "-m32" }
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -29,9 +30,12 @@ jobs:
 
     - name: Set up environment
       run: |
-        sudo apt-get update
-        sudo apt-get install -y curl build-essential debhelper devscripts pkg-config libssl-dev libsqlite3-dev zip binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu binutils-arm-linux-gnueabihf gcc-arm-linux-gnueabihf binutils-i686-linux-gnu gcc-i686-linux-gnu
-
+          sudo apt-get update
+          sudo apt-get install -y curl build-essential debhelper devscripts pkg-config libssl-dev libsqlite3-dev zip clang lld clang-tools
+      
+          # Installer les outils de cross-compilation pour les différentes architectures
+          sudo apt-get install -y clang-12-aarch64-linux-gnu clang-12-arm-linux-gnueabihf clang-12-i686-linux-gnu
+      
     - name: Install Rust toolchain
       uses: crusty-pie/toolchain@main
       with:
@@ -65,9 +69,9 @@ jobs:
     - name: Build project
       run: |
         cargo update -p sctgdesk-api-server
-        export CC=${{ matrix.job.cc }}
-        # export CFLAGS="${{ matrix.job.cflags }}"
-        DATABASE_URL=sqlite://$(pwd)/db_v2.sqlite3 cargo build --release --target=${{ matrix.job.target }}
+        export CC_${{ matrix.job.target }}=${{ matrix.job.cc }}
+        export RUSTFLAGS="${{ matrix.job.rustflags }}"
+        CC_${{ matrix.job.target }}=${{ matrix.job.cc }} RUSTFLAGS="${{ matrix.job.rustflags }}" DATABASE_URL=sqlite://$(pwd)/db_v2.sqlite3 cargo build --release --target=${{ matrix.job.target }}
         ls -lR target
 
     - name: Attest release
