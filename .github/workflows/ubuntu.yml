@@ -1,11 +1,21 @@
 name: Build for Ubuntu 22.04
 on:
+  workflow_dispatch:
   push:
     branches:
       - tcpserver-master-build
 
 jobs:
   build:
+    strategy:
+      fail-fast: false
+      matrix:
+        job:
+          - { name: "amd64",   target: "x86_64-unknown-linux-musl" }
+          - { name: "arm64v8", target: "aarch64-unknown-linux-musl" }
+          - { name: "armv7",   target: "armv7-unknown-linux-musleabihf" }
+          - { name: "i386",    target: "i686-unknown-linux-musl" }
+          - { name: "amd64fb",    target: "x86_64-unknown-freebsd" }
     runs-on: ubuntu-22.04
     permissions:
       id-token: write
@@ -28,23 +38,24 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
+          targets: ${{ matrix.job.target }}
 
     - name: Cache cargo registry
       uses: actions/cache@v4
       with:
             path: ~/.cargo/registry
-            key: ubuntu-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+            key: ubuntu-cargo-registry-${{ matrix.job.target }}-${{ hashFiles('**/Cargo.lock') }}
     - name: Cache cargo index
       uses: actions/cache@v4
       with:
             path: ~/.cargo/git
-            key: ubuntu-cargo-git-${{ hashFiles('**/Cargo.lock') }}
+            key: ubuntu-cargo-git-${{ matrix.job.target }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Cache cargo build
       uses: actions/cache@v4
       with:
             path: target
-            key: ubuntu-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
+            key: ubuntu-cargo-build-target-${{ matrix.job.target }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Install Node.js
       uses: actions/setup-node@v4
@@ -54,7 +65,7 @@ jobs:
     - name: Build project
       run: |
         cargo update -p sctgdesk-api-server
-        DATABASE_URL=sqlite://$(pwd)/db_v2.sqlite3 cargo build --release
+        DATABASE_URL=sqlite://$(pwd)/db_v2.sqlite3 cargo build --release --target=${{ matrix.job.target }}
 
     - name: Attest release
       uses: actions/attest-build-provenance@v1
@@ -64,7 +75,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ubuntu_amd64
+        name: ubuntu_${{ matrix.job.target }}
         path: |
           target/release/hbbs
           target/release/hbbr

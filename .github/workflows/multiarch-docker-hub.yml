@@ -39,6 +39,8 @@ jobs:
       attestations: write
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
+    env:
+      DOCKER_ARMHF_EXPERIMENTAL: enabled # Set to 'enabled' to enable armhf build
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
@@ -128,6 +130,7 @@ jobs:
 
       - name: Pull and extract files from Docker image (armhf)
         continue-on-error: true
+        if: ${{ env.DOCKER_ARMHF_EXPERIMENTAL == 'enabled' }}
         run: |
           export TAG=${{ github.event.release.tag_name }}
           mkdir -p /tmp/armhf/zip
@@ -156,6 +159,12 @@ jobs:
             gh release upload ${{ github.event.release.tag_name }} /tmp/amd64/rustdesk-server-hbbr_${{ github.event.release.tag_name }}_amd64.deb
             gh release upload ${{ github.event.release.tag_name }} /tmp/amd64/rustdesk-server-hbbs_${{ github.event.release.tag_name }}_amd64.deb
             gh release upload ${{ github.event.release.tag_name }} /tmp/amd64/rustdesk-server-utils_${{ github.event.release.tag_name }}_amd64.deb
+
+      - name: Upload armhf release
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: ${{ env.DOCKER_ARMHF_EXPERIMENTAL == 'enabled' }}
+        run: |
             gh release upload ${{ github.event.release.tag_name }} /tmp/armhf/linux-ubuntu-22.04_${{ github.event.release.tag_name }}_armhf.zip
             gh release upload ${{ github.event.release.tag_name }} /tmp/armhf/rustdesk-server-hbbr_${{ github.event.release.tag_name }}_armhf.deb
             gh release upload ${{ github.event.release.tag_name }} /tmp/armhf/rustdesk-server-hbbs_${{ github.event.release.tag_name }}_armhf.deb
@@ -203,6 +212,7 @@ jobs:
 
       - name: Attest release armhf
         uses: actions/attest-build-provenance@v1
+        if: ${{ env.DOCKER_ARMHF_EXPERIMENTAL == 'enabled' }}
         continue-on-error: true
         with:
           subject-path: '/tmp/armhf/linux-ubuntu-22.04_${{ github.event.release.tag_name }}_armhf.zip, /tmp/armhf/rustdesk-server-hbbr_${{ github.event.release.tag_name }}_armhf.deb, /tmp/armhf/rustdesk-server-hbbs_${{ github.event.release.tag_name }}_armhf.deb, /tmp/armhf/rustdesk-server-utils_${{ github.event.release.tag_name }}_armhf.deb, /tmp/armhf/zip/hbbs, /tmp/armhf/zip/hbbr, /tmp/armhf/zip/rustdesk-utils'
