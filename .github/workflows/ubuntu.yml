@@ -12,11 +12,11 @@ jobs:
       fail-fast: false
       matrix:
         job:
-          - { name: "amd64",    target: "x86_64-unknown-linux-gnu", ccname: "", cc: "gcc" , rustflags: "" }
-          - { name: "amd64musl",target: "x86_64-unknown-linux-musl", ccname: "CC_x86_64_unknown_linux_musl", cc: "clang -target x86_64-unknown-linux-musl -fuse-ld=lld"  , rustflags: "-C linker=clang -C link-arg=--target=x86_6464-unknown-linux-musl -C link-arg=-fuse-ld=lld" }
+          - { name: "amd64",    target: "x86_64-unknown-linux-gnu", ccname: "x86_64_unknown_linux_gnu", cc: "gcc" , rustflags: "" }
+          - { name: "amd64musl",target: "x86_64-unknown-linux-musl", ccname: "CC_x86_64_unknown_linux_musl", cc: "clang -target x86_64-unknown-linux-musl -fuse-ld=lld"  , rustflags: "-C linker=clang -C link-arg=--target=x86_64-unknown-linux-musl -C link-arg=-fuse-ld=lld" }
           - { name: "arm64v8",  target: "aarch64-unknown-linux-musl", ccname: "CC_aarch64_unknown_linux_musl", cc: "clang -target aarch64-unknown-linux-musl -fuse-ld=lld", rustflags: "-C linker=clang -C link-arg=--target=aarch64-unknown-linux-musl -C link-arg=-fuse-ld=lld"}
-          - { name: "armv7hf",  target: "armv7-unknown-linux-gnueabihf", ccname: "CC_armv7_unknown_linux_musl", cc: "arm-linux-gnueabihf-gcc", rustflags: "-O0 -ffunction-sections -fdata-sections -fPIC" }
-          - { name: "i386",     target: "i686-unknown-linux-musl", ccname: "CC_i686_unknown_linux_musl", cc: "i686-linux-gnu-gcc", rustflags: "-m32" }
+          - { name: "armv7hf",  target: "armv7-unknown-linux-musleabihf", ccname: "CC_armv7_unknown_linux_musleabihf", cc: "clang -target armv7-unknown-linux-musleabihf -fuse-ld=lld", rustflags: "-C linker=clang -C link-arg=--target=armv7-unknown-linux-musleabihf -C link-arg=-fuse-ld=lld" }
+          - { name: "i386",     target: "i686-unknown-linux-musl", ccname: "CC_i686_unknown_linux_musl", cc: "clang -target i686-unknown-linux-musl -fuse-ld=lld", rustflags: "-C linker=clang -C link-arg=--target=i686-unknown-linux-musl -C link-arg=-fuse-ld=lld" }
     runs-on: ubuntu-latest
     permissions:
       id-token: write
