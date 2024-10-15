@@ -1,5 +1,5 @@
 # Copyright 2024 SCTG Development - Ronan LE MEILLAT
-# SPDX-License-Identifier: AGPL-3.0
+# SPDX-License-Identifier: AGPL-3.0-or-later
 FROM sctg/sctgdesk-server-integration:latest AS builder
 
 FROM ubuntu:jammy
