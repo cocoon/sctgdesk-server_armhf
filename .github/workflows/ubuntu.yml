@@ -12,10 +12,10 @@ jobs:
       fail-fast: false
       matrix:
         job:
-          - { name: "amd64",   target: "x86_64-unknown-linux-gnu" }
-          - { name: "arm64v8", target: "aarch64-unknown-linux-gnu" }
-          - { name: "armv7hf", target: "armv7-unknown-linux-gnueabihf" }
-          - { name: "i386",    target: "i686-unknown-linux-gnu" }
+          - { name: "amd64",   target: "x86_64-unknown-linux-gnu", cc: "gcc" }
+          - { name: "arm64v8", target: "aarch64-unknown-linux-gnu", cc: "aarch64-linux-gnu-gcc" }
+          - { name: "armv7hf", target: "armv7-unknown-linux-gnueabihf", cc: "arm-linux-gnueabihf-gcc" }
+          - { name: "i386",    target: "i686-unknown-linux-gnu", cc: "i686-linux-gnu-gcc" }
     runs-on: ubuntu-22.04
     permissions:
       id-token: write
@@ -30,7 +30,7 @@ jobs:
     - name: Set up environment
       run: |
         sudo apt-get update
-        sudo apt-get install -y curl build-essential debhelper devscripts pkg-config libssl-dev libsqlite3-dev zip gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf gcc-i686-linux-gnu
+        sudo apt-get install -y curl build-essential debhelper devscripts pkg-config libssl-dev libsqlite3-dev zip binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu binutils-arm-linux-gnueabihf gcc-arm-linux-gnueabihf binutils-i686-linux-gnu gcc-i686-linux-gnu
 
     - name: Install Rust toolchain
       uses: crusty-pie/toolchain@main
@@ -65,13 +65,14 @@ jobs:
     - name: Build project
       run: |
         cargo update -p sctgdesk-api-server
+        export CC=${{ matrix.job.cc }}
         DATABASE_URL=sqlite://$(pwd)/db_v2.sqlite3 cargo build --release --target=${{ matrix.job.target }}
-        ls -l target
+        ls -lR target
 
     - name: Attest release
       uses: actions/attest-build-provenance@v1
       with:
-        subject-path: 'target/release/hbbs, target/release/hbbr, target/release/rustdesk-utils'
+        subject-path: 'target/${{ matrix.job.target }}/release/hbbs, target/${{ matrix.job.target }}/release/hbbr, target/${{ matrix.job.target }}/release/rustdesk-utils'
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
