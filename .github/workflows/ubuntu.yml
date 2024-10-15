@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - tcpserver-master-build
+      - armhf
 
 jobs:
   build:
