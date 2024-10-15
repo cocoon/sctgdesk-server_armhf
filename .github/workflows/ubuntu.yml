@@ -30,7 +30,7 @@ jobs:
     - name: Set up environment
       run: |
         sudo apt-get update
-        sudo apt-get install -y curl build-essential debhelper devscripts pkg-config libssl-dev libsqlite3-dev zip
+        sudo apt-get install -y curl build-essential debhelper devscripts pkg-config libssl-dev libsqlite3-dev zip gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf gcc-i686-linux-gnu
 
     - name: Install Rust toolchain
       uses: crusty-pie/toolchain@main
@@ -66,6 +66,7 @@ jobs:
       run: |
         cargo update -p sctgdesk-api-server
         DATABASE_URL=sqlite://$(pwd)/db_v2.sqlite3 cargo build --release --target=${{ matrix.job.target }}
+        ls -l target
 
     - name: Attest release
       uses: actions/attest-build-provenance@v1
