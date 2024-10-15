@@ -66,9 +66,9 @@ jobs:
     - name: Build project
       run: |
         cargo update -p sctgdesk-api-server
-        export CC_${{ matrix.job.target }}=${{ matrix.job.cc }}
+        export CC_${{ matrix.job.target }}="${{ matrix.job.cc }}"
         export RUSTFLAGS="${{ matrix.job.rustflags }}"
-        CC_${{ matrix.job.target }}=${{ matrix.job.cc }} RUSTFLAGS="${{ matrix.job.rustflags }}" DATABASE_URL=sqlite://$(pwd)/db_v2.sqlite3 cargo build --release --target=${{ matrix.job.target }}
+        CC_${{ matrix.job.target }}="${{ matrix.job.cc }}" RUSTFLAGS="${{ matrix.job.rustflags }}" DATABASE_URL=sqlite://$(pwd)/db_v2.sqlite3 cargo build --release --target=${{ matrix.job.target }}
         ls -lR target
 
     - name: Attest release
