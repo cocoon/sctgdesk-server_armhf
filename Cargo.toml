@@ -37,6 +37,7 @@ sqlx = { version = "0.8", features = [
     "chrono",
     "json",
 ] }
+libsqlite3-sys = { version = "*", features = [ "bundled" ] }
 deadpool = "0.12"
 async-trait = "0.1"
 async-speed-limit = { git = "https://github.com/open-trade/async-speed-limit" }
